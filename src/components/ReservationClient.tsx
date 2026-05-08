@@ -98,7 +98,8 @@ export default function Reservation() {
           onClick={() => {
             {
               router.push(
-                `/top?courseId=${courseId}&stylistId=${stylistId}&date=${date}&time=${time}`,
+                // `/top?courseId=${courseId}&stylistId=${stylistId}&date=${date}&time=${time}`,
+                `/top`,
               );
             }
           }}
