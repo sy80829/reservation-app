@@ -4,7 +4,10 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation";
 
 
-export async function login(next?: string) {
+export async function login(
+  next: string | undefined,
+  formData: FormData
+) {
   const redirectPath = next || '/top';
     //googleログイン
     //server.tsのcreateClient
