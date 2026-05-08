@@ -18,6 +18,21 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
         redirect("/login");
     }
 
+    //すでに予約があればリターン
+    // const { data: result, error: e } = await supabase
+    //     .from("reservations")
+    //     .select(`
+    //     id
+    //     `)
+    //     .eq("user_id", user.id)
+    //     .eq("is_canceled", false)
+    //     .single();
+    
+    // if (result) {
+    //     console.log("result:", result);
+    //     redirect('/errorPage?error=already_reserved');
+    // }
+
     //整形
     const parsedStylistId =
         stylist_id === null ? null : Number(stylist_id);
@@ -92,7 +107,7 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
     });
     if(error) {
         if (error.message.includes('すでに予約があります')) {
-        redirect('/top?error=already_reserved');
+        redirect('/errorPage?error=already_reserved');
         }
         throw new Error(error.message);
     }
