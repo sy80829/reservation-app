@@ -11,13 +11,13 @@ import ReserveButton from '@/components/ReserveButton';
 import { useSearchParams } from 'next/navigation';
 
 export default function TopPage() {
-  const searchParams = useSearchParams();
-  const courseId = searchParams.get('courseId');
-  const stylistId = searchParams.get('stylistId');
-  const date = searchParams.get('date');
-  const time = searchParams.get('time');
-  const mode = searchParams.get('mode');
-  const reserv_id = searchParams.get('id');
+  // const searchParams = useSearchParams();
+  // const courseId = searchParams.get('courseId');
+  // const stylistId = searchParams.get('stylistId');
+  // const date = searchParams.get('date');
+  // const time = searchParams.get('time');
+  // const mode = searchParams.get('mode');
+  // const reserv_id = searchParams.get('id');
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
   const [selectedCurseId, setSelectedCurseId] = useState<string | null>(null); // 選択中のコース
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
@@ -104,12 +104,12 @@ export default function TopPage() {
   };
 
   //クエリパラメータがあれば初期化
-  useEffect(() => {
-    if (courseId) setSelectedCurseId(courseId);
-    if (stylistId) setselectedStylist(stylistId);
-    if (date) setSelectedDate(date);
-    if (time) setSelectedTime(time);
-  }, []);
+  // useEffect(() => {
+  //   if (courseId) setSelectedCurseId(courseId);
+  //   if (stylistId) setselectedStylist(stylistId);
+  //   if (date) setSelectedDate(date);
+  //   if (time) setSelectedTime(time);
+  // }, []);
 
   const selectedStylistData = stylists.find((s) => s.id === selectedStylist);
 
