@@ -87,7 +87,7 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
         p_new_start: parsedParams.new_start,
         p_new_end: parsedParams.new_end,
         p_course_id : parsedParams.course_id,
-        p_stylist_id: parsedParams.stylist_id,
+        p_stylist_id: parsedParams.stylist_id as any,
         p_user_id: user.id,
     });
     if(error) {
