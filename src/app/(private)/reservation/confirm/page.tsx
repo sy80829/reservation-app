@@ -6,14 +6,13 @@ import { redirect } from 'next/navigation';
 
 export default async function Page() {
   const supabase = await createClient();
-  // console.log('params:', params);
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    redirect('/login');
+    redirect('/login?reservation/confirm');
   }
 
   const user_id = user.id;

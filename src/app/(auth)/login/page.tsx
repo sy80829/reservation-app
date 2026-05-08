@@ -2,7 +2,7 @@ import React from 'react';
 import { login } from './actions';
 import Image from 'next/image';
 
-export default function LoginPage() {
+export default function LoginPage(next?: string) {
   return (
     <form className="min-h-screen pt-5 pl-5">
       <div className="w-full max-w-md">
@@ -11,7 +11,7 @@ export default function LoginPage() {
         </h1>
 
         <button
-          formAction={login}
+          formAction={login.bind(null, next)}
           className="flex items-center gap-3 border rounded-lg px-4 py-2 shadow-sm hover:bg-gray-50"
         >
           <Image src="/images/g-logo.png" alt="google" width={20} height={20} />
