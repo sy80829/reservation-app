@@ -12,7 +12,7 @@ export default async function Page() {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    redirect('/login?reservation/confirm');
+    redirect('/login?next=/reservation/confirm');
   }
 
   const user_id = user.id;

@@ -2,7 +2,14 @@ import React from 'react';
 import { login } from './actions';
 import Image from 'next/image';
 
-export default function LoginPage(next?: string) {
+type Props = {
+  searchParams: {
+    next?: string;
+  };
+};
+
+export default function LoginPage({ searchParams }: Props) {
+  const next = searchParams.next;
   return (
     <form className="min-h-screen pt-5 pl-5">
       <div className="w-full max-w-md">
