@@ -41,7 +41,7 @@ export default function ReservationConfirmPage({
       <div className="flex flex-col items-center mt-5">
         <button
           onClick={() => handleClick()}
-          className="bg-[#22C55E] text-white hover:bg-[#1eb856] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow"
+          className="bg-[#22C55E] text-white hover:bg-[#1eb856] transition cursor-pointer w-43 md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow"
         >
           予約を変更する
         </button>

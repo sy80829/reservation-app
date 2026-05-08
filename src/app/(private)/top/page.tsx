@@ -178,7 +178,7 @@ export default function TopPage() {
               reservCalendar.map((calendar) => (
                 <div
                   key={calendar.date}
-                  className="flex-[0_0_calc(100%/7)] px-2"
+                  className="flex-[0_0_calc(100%/2)] md:flex-[0_0_calc(100%/7)] px-1 md:px-2"
                 >
                   <CalendarCard
                     calendar={calendar}

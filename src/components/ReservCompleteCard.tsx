@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardAction,
@@ -8,12 +10,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ReservCompleteCardProps } from '@/types';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   reservDetails: ReservCompleteCardProps;
 };
 
 export default function ReservCompleteCard({ reservDetails }: Props) {
+  const router = useRouter();
   return (
     <div>
       <img
@@ -45,10 +49,16 @@ export default function ReservCompleteCard({ reservDetails }: Props) {
         予約の変更は、トップ右上メニューの「予約確認ページ」から行えます。
       </h2>
       <div className="flex flex-col items-center mt-5">
-        <button className="bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3">
+        <button
+          className="bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3"
+          onClick={() => router.push('/reservation/confirm')}
+        >
           予約確認ページへ
         </button>
-        <button className="bg-[#F3F4F6] text-black hover:bg-[#e4d9d9] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3">
+        <button
+          className="bg-[#F3F4F6] text-black hover:bg-[#e4d9d9] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3"
+          onClick={() => router.push('/top')}
+        >
           トップへ戻る
         </button>
       </div>

@@ -5,8 +5,10 @@ import { Menu } from 'lucide-react';
 import MenuCard from './MenuCard';
 import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+  const router = useRouter();
   //メニューの開閉状態
   const [menuOpen, setMenuOpen] = useState(false);
   //ハンバーガーメニュー
@@ -51,7 +53,12 @@ export default function Header() {
       <header className="bg-background h-16 fixed top-0 left-0 w-full z-50 border">
         {/* h-full:親の上下幅を引き継ぐ  / 左内側に余白 / 横方向に中央ぞろえ（縦はjustify-center） */}
         <div className="relative max-w-[1440px] mx-auto px-10 flex items-center justify-between h-16">
-          <div className="text-2xl font-bold">美容室予約App</div>
+          <div
+            className="text-2xl font-bold"
+            onClick={() => router.push('/top')}
+          >
+            美容室予約App
+          </div>
 
           <div className="flex items-center gap-4">
             {user && (
