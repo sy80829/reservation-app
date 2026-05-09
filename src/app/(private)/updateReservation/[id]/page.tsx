@@ -20,7 +20,7 @@ export default async function Page({
   // };
 }) {
   // console.log('🔥 FULL URL PARAMS:', searchParams);
-  const user = await userCheck();
+  // const user = await userCheck();
 
   // const reservationSearchParams = await searchParams;
   const reservationParams = await params;
@@ -41,11 +41,11 @@ export default async function Page({
   currentPath = `/updateReservation?id=${reservationParams.id}`;
 
   // 未登録なら登録へ
-  if (!user) {
-    console.log('未登録です');
-    //会員登録後、元の予約ページに戻る
-    redirect(`/registerUser?next=${encodeURIComponent(currentPath)}`);
-  }
+  // if (!user) {
+  //   console.log('未登録です');
+  //   //会員登録後、元の予約ページに戻る
+  //   redirect(`/registerUser?next=${encodeURIComponent(currentPath)}`);
+  // }
 
   console.log('戻ります');
 

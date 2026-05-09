@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { UpdateReseervationButton } from '@/types';
 
 export default function UpdateReservationButton({
+  isSelect,
   id,
   courseId,
   stylistId,
@@ -59,8 +60,12 @@ export default function UpdateReservationButton({
     <div className="flex justify-center mt-4">
       <button
         onClick={() => handleCheck()}
+        disabled={!isSelect}
         className={cn(
-          'w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer',
+          'w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl',
+          isSelect
+            ? 'bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer'
+            : 'bg-gray-200 opacity-50 cursor-not-allowed',
         )}
       >
         予約を変更する

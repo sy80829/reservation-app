@@ -150,6 +150,9 @@ export default function TopPage({ reservation, mode, error }: Props) {
       {error === 'already_reserved' && (
         <div className="text-red-500">既に予約済みのため予約できません。</div>
       )}
+      {error === 'invalid_operation' && (
+        <div className="text-red-500">予期せぬエラーが発生しました</div>
+      )}
       <div>
         {mode === 'edit' && (
           <div className="text-center">
@@ -212,7 +215,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
               reservCalendar.map((calendar) => (
                 <div
                   key={calendar.date}
-                  className="flex-[0_0_calc(100%/7)] px-2"
+                  className="flex-[0_0_calc(100%/2)] md:flex-[0_0_calc(100%/7)] px-1 md:px-2"
                 >
                   <CalendarCard
                     calendar={calendar}
@@ -247,6 +250,11 @@ export default function TopPage({ reservation, mode, error }: Props) {
           <div className="flex items-center flex-col">
             {/* <button>変更を確定する</button> */}
             <UpdateReservationButton
+              isSelect={
+                selectedCurseId != null &&
+                selectedDate != null &&
+                selectedTime != null
+              }
               id={reservation?.id}
               courseId={selectedCurseId}
               stylistId={selectedStylist}

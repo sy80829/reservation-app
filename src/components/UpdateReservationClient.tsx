@@ -2,31 +2,18 @@
 
 import { useSearchParams, useRouter, redirect } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { reservAction } from '@/app/(private)/actions/reservAction';
 import ReservationCard from '@/components/ReservationCard';
-import { Course, ReservCompleteCardProps, Stylist } from '@/types';
-import ReservCompleteCard from './ReservCompleteCard';
+import { Course, Stylist } from '@/types';
 import { updateRservation } from '@/app/(private)/actions/updateReservation';
 import { useEditReservationDataStore } from '@/atoms/editReservationDataState';
 
 export default function UpdateReservationClient({ id }: { id: string }) {
-  console.log('ReservationClientにきました');
-  const params = useSearchParams();
   const router = useRouter();
-  // const id = params.get('id');
-  const courseId = params.get('courseId');
-  const stylistId =
-    params.get('stylistId') === 'null' ? undefined : params.get('stylistId');
-  const date = params.get('date');
-  const time = params.get('time');
   const [course, setCourse] = useState<Course>();
   const [stylist, setStylist] = useState<Stylist>();
   const { editReservationData } = useEditReservationDataStore();
 
-  console.log('editReservationData:', editReservationData);
-  console.log('editReservationData.courseId:', editReservationData.courseId);
-
-  //コース取得
+  //UI表示用　コース取得
   const fetchCourse = async () => {
     try {
       const res = await fetch(
@@ -39,7 +26,7 @@ export default function UpdateReservationClient({ id }: { id: string }) {
     }
   };
 
-  //スタイリスト取得
+  //UI表示用　スタイリスト取得
   const fetchStylist = async () => {
     try {
       const res = await fetch(
@@ -52,8 +39,6 @@ export default function UpdateReservationClient({ id }: { id: string }) {
       console.error(error);
     }
   };
-
-  console.log('stylist:', stylist);
 
   useEffect(() => {
     if (editReservationData.courseId) {
@@ -74,8 +59,7 @@ export default function UpdateReservationClient({ id }: { id: string }) {
     console.log('date:', editReservationData.date);
     console.log('time:', editReservationData.time);
     console.log('コースID、日付、時間がありません');
-    // router.push('/');
-    return null;
+    router.push('/top?error=invalid_operation');
   }
 
   if (!course) {
@@ -119,9 +103,7 @@ export default function UpdateReservationClient({ id }: { id: string }) {
         <button
           onClick={() => {
             {
-              router.push(
-                `/top?courseId=${courseId}&stylistId=${stylistId}&date=${date}&time=${time}`,
-              );
+              router.push(`/top`);
             }
           }}
           className="bg-[#22C55E] text-white hover:bg-[#1fb456] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl"

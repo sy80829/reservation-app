@@ -8,8 +8,7 @@ export async function userCheck() {
     const user = (await supabase.auth.getUser()).data.user;
 
     if(!user ) {
-        redirect("/login");
-        console.log("ログインページへ");
+        throw new Error("ユーザ情報取得に失敗");
     }
 
     try{

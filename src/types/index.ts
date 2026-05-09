@@ -63,6 +63,7 @@ export interface ReserveButtonProps {
 }
 
 export interface UpdateReseervationButton {
+  isSelect: boolean;
   id: number | undefined;
   courseId: string | null;
   stylistId: string | null;
@@ -165,8 +166,8 @@ export interface StylistResult {
 export interface ReservationCardProps {
   course: Course,
   stylist?: Stylist,
-  date: string,
-  time: string,
+  date: string | null,
+  time: string | null,
 }
 
 export interface ReservCompleteCardProps {
