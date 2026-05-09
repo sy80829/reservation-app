@@ -33,7 +33,11 @@ export const ReservationEmail = ({ name, reservData }: Props) => (
         スタイリスト：{reservData.stylists.name}
       </Text>
 
-      <Text>以下ページから予約の確認・変更・キャンセルが行えます。</Text>
+      <Text>
+        以下ページから予約の確認・変更・キャンセルが行えます。
+        <br />
+        https://reservation-app-green-nine.vercel.app/reservation/confirm
+      </Text>
     </Body>
   </Html>
 );

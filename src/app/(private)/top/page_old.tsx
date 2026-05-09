@@ -2,29 +2,22 @@
 
 import StaffSelectDrawer from '@/components/StaffSelectDrawer';
 import CourseCard from '@/components/CourseCard';
-import type {
-  CourseCardType,
-  reservCalendar,
-  stylistsType,
-  TopPageProps,
-} from '@/types';
+import type { CourseCardType, reservCalendar, stylistsType } from '@/types';
 import { useEffect, useState } from 'react';
 import CalendarCard from '@/components/CalendarCard';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
 import ReserveButton from '@/components/ReserveButton';
-import { useRouter } from 'next/navigation';
-import UpdateReservationButton from './UpdateReservationButton';
-import { useEditReservationDataStore } from '@/atoms/editReservationDataState';
+import { useSearchParams } from 'next/navigation';
 
-type Props = {
-  reservation?: TopPageProps;
-  mode?: string;
-  error?: string;
-};
-
-export default function TopPage({ reservation, mode, error }: Props) {
-  const router = useRouter();
+export default function TopPage() {
+  // const searchParams = useSearchParams();
+  // const courseId = searchParams.get('courseId');
+  // const stylistId = searchParams.get('stylistId');
+  // const date = searchParams.get('date');
+  // const time = searchParams.get('time');
+  // const mode = searchParams.get('mode');
+  // const reserv_id = searchParams.get('id');
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
   const [selectedCurseId, setSelectedCurseId] = useState<string | null>(null); // 選択中のコース
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
@@ -33,25 +26,6 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const [selectedTime, setSelectedTime] = useState<string | null>(null); //選択中の時間
   const [reservCalendar, setRservCalendar] = useState<reservCalendar[]>([]);
   const [open, setOpen] = useState(false); //スタイリストモーダル状態
-  const excludeId = mode === 'edit' ? reservation?.id : null; //予約変更画面
-  const { setEditReservationData } = useEditReservationDataStore(); //予約編集時のデータ状態
-
-  useEffect(() => {
-    //予約確認ぺージから遷移したときの初期表示
-    if (reservation) {
-      setSelectedCurseId(String(reservation.courses.id));
-      setselectedStylist(String(reservation.stylists.id));
-      setSelectedDate(reservation.reserv_date);
-      setSelectedTime(reservation.reserv_time_st.slice(0, 5));
-      //フリー予約の場合スタイリストidは非選択状態にする
-      if (reservation.is_free) {
-        setselectedStylist(null);
-      } else {
-        setselectedStylist(String(reservation.stylists.id));
-      }
-    }
-  }, [reservation]);
-
   //Embla初期化
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -93,7 +67,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const fetchCalendar = async () => {
     try {
       const res = await fetch(
-        `/api/calendar?course_id=${selectedCurseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
+        `/api/calendar?course_id=${selectedCurseId}&stylist_id=${selectedStylist}`,
       );
       const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
 
@@ -129,17 +103,26 @@ export default function TopPage({ reservation, mode, error }: Props) {
     }, 300);
   };
 
+  //クエリパラメータがあれば初期化
+  // useEffect(() => {
+  //   if (courseId) setSelectedCurseId(courseId);
+  //   if (stylistId) setselectedStylist(stylistId);
+  //   if (date) setSelectedDate(date);
+  //   if (time) setSelectedTime(time);
+  // }, []);
+
   const selectedStylistData = stylists.find((s) => s.id === selectedStylist);
 
-  const UpdateReservationButtonClick = () => {
-    setEditReservationData({
-      version: reservation?.version,
-      date: selectedDate,
-      time: selectedTime,
-      courseId: selectedCurseId,
-      stylistId: selectedStylist,
-    });
-  };
+  //テスト
+  console.log('selectedDate:', { selectedDate });
+  console.log('selectedTime:', { selectedTime });
+
+  console.log('選択状態', {
+    selectedCurseId,
+    selectedStylist,
+    selectedDate,
+    selectedTime,
+  });
 
   if (courses.length === 0) {
     return <p>読み込み中...</p>;
@@ -147,20 +130,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
 
   return (
     <>
-      {error === 'already_reserved' && (
-        <div className="text-red-500">既に予約済みのため予約できません。</div>
-      )}
       <div>
-        {mode === 'edit' && (
-          <div className="text-center">
-            <div className="font-bold text-2xl pt-2">予約変更ページ</div>
-            <div className=" text-blue-600">
-              現在の予約：{reservation?.reserv_date}{' '}
-              {reservation?.reserv_time_st}~{reservation?.reserv_time_ed}{' '}
-              {reservation?.courses.name} ({reservation?.stylists.name})
-            </div>
-          </div>
-        )}
         <div className="font-bold text-2xl pt-5 pb-5">コース</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {courses?.map((course) => (
@@ -176,33 +146,29 @@ export default function TopPage({ reservation, mode, error }: Props) {
       <div className="flex pt-5 gap-4">
         {/* <div className="pt-5 text-2xl pb-5 font-bold">空き状況</div> */}
         <div className="text-2xl font-bold">空き状況</div>
-        <div className="flex gap-4">
-          <div>
-            <StaffSelectDrawer
-              stylists={stylists}
-              selectedStylist={selectedStylist}
-              setOpen={setOpen}
-              open={open}
-              onSelect={handleStylistSelect}
-            />
-          </div>
-          {selectedStylistData && (
-            <div className="flex items-center gap-2">
-              <img src={selectedStylistData.image_url} className="w-9 h-9" />
-              <span className="font-bold -mr-1">
-                {selectedStylistData.name}
-              </span>
-              <button
-                onClick={() => {
-                  setselectedStylist(null);
-                }}
-                className="p-1 rounded-full hover:bg-gray-200 pt-1.5"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+        <div>
+          <StaffSelectDrawer
+            stylists={stylists}
+            selectedStylist={selectedStylist}
+            setOpen={setOpen}
+            open={open}
+            onSelect={handleStylistSelect}
+          />
         </div>
+        {selectedStylistData && (
+          <div className="flex items-center gap-2">
+            <img src={selectedStylistData.image_url} className="w-9 h-9" />
+            <span className="font-bold -mr-1">{selectedStylistData.name}</span>
+            <button
+              onClick={() => {
+                setselectedStylist(null);
+              }}
+              className="p-1 rounded-full hover:bg-gray-200 pt-1.5"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
       <div className="relative pt-5">
         <div className="overflow-hidden" px-2 ref={emblaRef}>
@@ -212,7 +178,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
               reservCalendar.map((calendar) => (
                 <div
                   key={calendar.date}
-                  className="flex-[0_0_calc(100%/7)] px-2"
+                  className="flex-[0_0_calc(100%/2)] md:flex-[0_0_calc(100%/7)] px-1 md:px-2"
                 >
                   <CalendarCard
                     calendar={calendar}
@@ -243,40 +209,18 @@ export default function TopPage({ reservation, mode, error }: Props) {
             </button>
           </div>
         )}
-        {mode === 'edit' ? (
-          <div className="flex items-center flex-col">
-            {/* <button>変更を確定する</button> */}
-            <UpdateReservationButton
-              id={reservation?.id}
-              courseId={selectedCurseId}
-              stylistId={selectedStylist}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              UpdateReservationButtonClick={UpdateReservationButtonClick}
-            />
-            <button
-              onClick={() => {
-                router.push('/reservation/confirm');
-              }}
-              className="bg-[#EF4444] text-white hover:bg-[#d83d3d] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow"
-            >
-              変更をキャンセル
-            </button>
-          </div>
-        ) : (
-          selectedCurseId && (
-            <ReserveButton
-              isSelect={
-                selectedCurseId != null &&
-                selectedDate != null &&
-                selectedTime != null
-              }
-              courseId={selectedCurseId}
-              stylistId={selectedStylist}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-            />
-          )
+        {selectedCurseId && (
+          <ReserveButton
+            isSelect={
+              selectedCurseId != null &&
+              selectedDate != null &&
+              selectedTime != null
+            }
+            courseId={selectedCurseId}
+            stylistId={selectedStylist}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+          />
         )}
       </div>
     </>

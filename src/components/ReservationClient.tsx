@@ -65,12 +65,16 @@ export default function Reservation() {
 
   const handleClick = async () => {
     //　予約処理
-    await reservAction({
+    let result = await reservAction({
       new_start: time + ':00',
       target_date: date,
       course_id: courseId,
       stylist_id: stylistId ?? null,
     });
+
+    if (result) {
+      router.push(`/top?error=${result}`);
+    }
   };
 
   return (

@@ -15,7 +15,7 @@ export default function StylistCard({
       <div
         onClick={() => onSelect(stylist.id)}
         className={cn(
-          'flex items-center gap-5 border p-3 pl-10 rounded-3xl cursor-pointer',
+          'flex items-center gap-5 border p-3  rounded-3xl cursor-pointer',
           selectedStylist === stylist.id
             ? 'ring-2 ring-[#007AFF]'
             : 'hover:bg-accent',

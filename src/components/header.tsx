@@ -54,7 +54,7 @@ export default function Header() {
         {/* h-full:親の上下幅を引き継ぐ  / 左内側に余白 / 横方向に中央ぞろえ（縦はjustify-center） */}
         <div className="relative max-w-[1440px] mx-auto px-10 flex items-center justify-between h-16">
           <div
-            className="text-2xl font-bold"
+            className="text-2xl font-bold transition-colors duration-200 cursor-pointer"
             onClick={() => router.push('/top')}
           >
             美容室予約App
@@ -71,14 +71,14 @@ export default function Header() {
             <button
               ref={buttonRef}
               onClick={() => setMenuOpen(!menuOpen)}
-              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition cursor-pointer"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6 " />
             </button>
 
             {menuOpen && (
-              <div ref={menuRef} className="absolute right-20 top-12 w-56">
-                <MenuCard />
+              <div ref={menuRef} className="absolute right-10 top-15 w-56">
+                <MenuCard setMenuOpen={setMenuOpen} />
               </div>
             )}
           </div>

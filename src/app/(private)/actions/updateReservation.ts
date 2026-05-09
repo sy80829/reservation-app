@@ -143,13 +143,15 @@ export async function updateRservation ( { reservationId, editReservationData } 
     //予約データ取得
     const reservData = await getReservation(parsedReservationId);
 
-    //メール送信
-    sendMail({
-        type: "update",
-        email: user.email,
-        name: user.user_metadata.name,
-        reservData: reservData,
-    });
+    if(reservData){
+        //メール送信
+        sendMail({
+            type: "update",
+            email: user.email,
+            name: user.user_metadata.name,
+            reservData: reservData,
+        });
+    }
 
     console.log( "success " , "更新完了"); 
 

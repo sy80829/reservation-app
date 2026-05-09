@@ -39,13 +39,15 @@ export async function cancelReservation ({ id, version }: Props) {
     //予約データ取得
     const reservData = await getReservation(id);
 
-    //メール送信
-    sendMail({
-        type: "cancel",
-        email: user.email,
-        name: user.user_metadata.name,
-        reservData: reservData,
-    });
+    if(reservData){
+        //メール送信
+        sendMail({
+            type: "cancel",
+            email: user.email,
+            name: user.user_metadata.name,
+            reservData: reservData,
+        });
+    }
 
     redirect("/cancelComplete");
 }

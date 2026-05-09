@@ -2,14 +2,27 @@ import React from 'react';
 import { login } from './actions';
 import Image from 'next/image';
 
-export default function LoginPage() {
+type Props = {
+  searchParams: Promise<{
+    redirectTo?: string;
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const params = await searchParams;
   // const next = searchParams.next;
   return (
     <form className="min-h-screen pt-5 pl-5">
       <div className="w-full max-w-md">
         <h1 className="text-lg font-semibold mb-6">
-          予約するにはログインしてください
+          操作にはログインが必要です
         </h1>
+
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={params.redirectTo ?? ''}
+        />
 
         <button
           formAction={login}

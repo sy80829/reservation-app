@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims
 
-  const protectedPaths = ['/reservation', '/mypage']
+  const protectedPaths = ['/reservation']
 
   const isProtected = protectedPaths.some(path =>
   request.nextUrl.pathname.startsWith(path)
@@ -48,10 +48,17 @@ export async function updateSession(request: NextRequest) {
 
   //リダイレクト
   if (!user && isProtected) {
-  const url = request.nextUrl.clone()
-  url.pathname = '/login'
-  return NextResponse.redirect(url)
-}
+    const url = request.nextUrl.clone()
+    // url.pathname = '/login'
+    // return NextResponse.redirect(url)
+    url.pathname = '/login'
+    url.searchParams.set(
+    'redirectTo',
+    request.nextUrl.pathname + request.nextUrl.search
+  )
+    console.log("リダイレクトurl:",url);
+    return NextResponse.redirect(url)
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

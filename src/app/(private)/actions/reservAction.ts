@@ -18,21 +18,6 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
         redirect("/login");
     }
 
-    //すでに予約があればリターン
-    // const { data: result, error: e } = await supabase
-    //     .from("reservations")
-    //     .select(`
-    //     id
-    //     `)
-    //     .eq("user_id", user.id)
-    //     .eq("is_canceled", false)
-    //     .single();
-    
-    // if (result) {
-    //     console.log("result:", result);
-    //     redirect('/errorPage?error=already_reserved');
-    // }
-
     //整形
     const parsedStylistId =
         stylist_id === null ? null : Number(stylist_id);
@@ -41,15 +26,15 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
     //course_id実在確認
     const { data: course, error: coursesChceckError } = await supabase.from("courses").select("duration").eq("id", parsedCourseId).single();
     
-    if ( coursesChceckError ) {
+    if ( !course || coursesChceckError ) {
         throw new Error(coursesChceckError.message);
     }
 
     if (parsedStylistId !== null) {
         //stylist_id実在確認
-        const { error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).single();
+        const { data : stylist, error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).single();
 
-        if ( stylistsCheckError ) {
+        if ( !stylist || stylistsCheckError ) {
             throw new Error(stylistsCheckError.message);
         }
     }
@@ -105,31 +90,32 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
         p_stylist_id: parsedParams.stylist_id as any,
         p_user_id: user.id,
     });
+    //既に予約があった場合
     if(error) {
         if (error.message.includes('すでに予約があります')) {
-        redirect('/errorPage?error=already_reserved');
+            let result = "already_reserved";
+            return result;
         }
         throw new Error(error.message);
     }
+    //予約失敗
     if(!data){
-        console.log("dataがあありません");
-        redirect("/top");
+        throw new Error('予約作成結果が空です');
     }
 
-    console.log("reservData.id:" , data.id);
-    console.log( "success " , "フリー予約完了");
-
-    //予約データ取得
+    //メール送信用の予約データを取得
     const reservData = await getReservation(data.id);
 
-    //メール送信
-    sendMail({
-        type: "reservation",
-        email: user.email,
-        name: user.user_metadata.name,
-        reservData: reservData,
-    });
+    if(reservData){
+        //メール送信
+        sendMail({
+            type: "reservation",
+            email: user.email,
+            name: user.user_metadata.name,
+            reservData: reservData,
+        });
+    }
 
     // 予約完了ページへリダイレクト
-    redirect(`/reservationComplete/${reservData.id}`);
+    redirect(`/reservationComplete/${data.id}`);
 }

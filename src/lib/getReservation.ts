@@ -1,3 +1,5 @@
+"use server";
+
 import { createClient } from "@/lib/supabase/server";
 
 export async function getReservation(id: number) {
@@ -22,8 +24,8 @@ export async function getReservation(id: number) {
         .eq("id", id)
         .single();
 
-    if (error || !data) {
-        throw new Error("予約取得失敗");
+    if (error) {
+        return null;
     }
 
     return data;
