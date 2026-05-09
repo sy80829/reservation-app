@@ -1,11 +1,11 @@
 import { registerUser } from './actions';
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: { next?: string };
+  searchParams: Promise<{ redirectTo?: string }>;
 }) {
-  const next = searchParams.next;
+  const params = await searchParams;
 
   return (
     <form action={registerUser}>
@@ -14,7 +14,11 @@ export default function Page({
       </p>
 
       <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-        <input type="hidden" name="next" value={next ?? ''} />
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={params.redirectTo ?? ''}
+        />
 
         <p>お名前：</p>
         <input

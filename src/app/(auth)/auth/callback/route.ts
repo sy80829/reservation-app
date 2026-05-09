@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 // The client you created from the Server-Side Auth instructions
 import { createClient } from '@/lib/supabase/server'
+import { userCheck } from '@/lib/supabase/user'
 
 export async function GET(request: Request) {
   console.log("request.url:",request.url)
@@ -17,6 +18,20 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
+      //会員登録チェック
+      const user = await userCheck();
+      // 未登録なら登録へ
+      if (!user) {
+        console.log('未登録です');
+        //会員登録後、元の予約ページに戻る
+        return NextResponse.redirect(
+          new URL(
+            `/registerUser?redirectTo=${encodeURIComponent(next)}`,
+            origin
+          )
+        )
+      }
+      
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
@@ -29,6 +44,8 @@ export async function GET(request: Request) {
       }
     }
   }
+
+  
 
   // return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)

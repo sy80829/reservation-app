@@ -5,9 +5,9 @@ import { redirect } from 'next/navigation';
 
 export async function registerUser(formData: FormData) {
   const supabase = await createClient();
-  const next = formData.get('next') as string;
+  const redirectTo = formData.get('redirectTo') as string;
 
-  console.log("next:", next);
+  console.log("next:", redirectTo);
 
   const {
     data: { user },
@@ -32,9 +32,9 @@ export async function registerUser(formData: FormData) {
 
   // 元のページにリダイレクト
   if (!error) {
-      if (next?.startsWith('/')) {
+      if (redirectTo?.startsWith('/')) {
         console.log("リダイレクト");
-      redirect(next);
+      redirect(redirectTo);
     } else {
       redirect('/');
     }

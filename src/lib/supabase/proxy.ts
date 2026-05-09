@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { userCheck } from './user'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -40,25 +41,84 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims
 
   const protectedPaths = ['/reservation']
+  const registerPaths = ['/registerUser']
 
   const isProtected = protectedPaths.some(path =>
   request.nextUrl.pathname.startsWith(path)
-)
+  )
 
+  const isRegisterPage =
+  registerPaths.some(path =>
+  request.nextUrl.pathname.startsWith(path)
+  )
 
-  //リダイレクト
+  //未ログイン
   if (!user && isProtected) {
     const url = request.nextUrl.clone()
-    // url.pathname = '/login'
-    // return NextResponse.redirect(url)
+
     url.pathname = '/login'
+
     url.searchParams.set(
-    'redirectTo',
-    request.nextUrl.pathname + request.nextUrl.search
-  )
-    console.log("リダイレクトurl:",url);
+      'redirectTo',
+      request.nextUrl.pathname +
+        request.nextUrl.search
+    )
+
     return NextResponse.redirect(url)
   }
+
+  // ログイン済みの場合、会員登録チェックをする
+  if (
+    user &&
+    isProtected &&
+    !isRegisterPage
+  ) {
+    const isRegistered =
+      await userCheck()
+
+    if (!isRegistered) {
+      const url =
+        request.nextUrl.clone()
+
+      url.pathname =
+        '/registerUser'
+
+      url.searchParams.set(
+        'redirectTo',
+        request.nextUrl.pathname +
+          request.nextUrl.search
+      )
+
+      return NextResponse.redirect(url)
+    }
+  }
+
+
+
+  // //リダイレクト
+  // if (!user && isProtected && !isRegisterPage) {
+  //   const isRegistered = await userCheck()
+  //   const url = request.nextUrl.clone()
+  //   // url.pathname = '/login'
+  //   // return NextResponse.redirect(url)
+  //   if (!isRegistered) {
+  //     const url =request.nextUrl.clone()
+  //     url.pathname ='/registerUser'
+  //     url.searchParams.set(
+  //     'redirectTo',
+  //     request.nextUrl.pathname + request.nextUrl.search
+  //     )
+
+  //     return NextResponse.redirect(url)
+  //   }
+  //   url.pathname = '/login'
+  //   url.searchParams.set(
+  //   'redirectTo',
+  //   request.nextUrl.pathname + request.nextUrl.search
+  //   )
+  //   console.log("リダイレクトurl:",url);
+  //   return NextResponse.redirect(url)
+  // }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
