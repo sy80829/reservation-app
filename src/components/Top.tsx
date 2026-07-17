@@ -8,7 +8,7 @@ import type {
   stylistsType,
   TopPageProps,
 } from '@/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CalendarCard from '@/components/CalendarCard';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
@@ -16,6 +16,8 @@ import ReserveButton from '@/components/ReserveButton';
 import { useRouter } from 'next/navigation';
 import UpdateReservationButton from './UpdateReservationButton';
 import { useEditReservationDataStore } from '@/atoms/editReservationDataState';
+import DateJumpCalendar from './DateJumpCalendar';
+import DateJumpCalendarButton from './DateJumpCalendarButton';
 
 type Props = {
   reservation?: TopPageProps;
@@ -35,6 +37,28 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const [open, setOpen] = useState(false); //スタイリストモーダル状態
   const excludeId = mode === 'edit' ? reservation?.id : null; //予約変更画面
   const { setEditReservationData } = useEditReservationDataStore(); //予約編集時のデータ状態
+  const [showCalendar, setShowCalenadar] = useState<boolean>(false);
+  const showCalendarButtonRef = useRef<HTMLButtonElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    //画面外メニューボタンとメニュー以外をクリックしたとき
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node) &&
+        !showCalendarButtonRef.current?.contains(e.target as Node)
+      ) {
+        setShowCalenadar(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     //予約確認ぺージから遷移したときの初期表示
@@ -141,8 +165,33 @@ export default function TopPage({ reservation, mode, error }: Props) {
     });
   };
 
+  //DateJumpCalendarクリック時発火
+  const dateClick = async (date: string) => {
+    const index = reservCalendar.findIndex((c) => c.date === date);
+    emblaApi?.scrollTo(index);
+    setSelectedDate(date);
+  };
+
+  //ローディング
   if (courses.length === 0) {
-    return <p>読み込み中...</p>;
+    return (
+      <div className="animate-pulse">
+        <div className="h-8 w-20 rounded bg-gray-200 mt-5 mb-5" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="h-32 rounded-lg bg-gray-200" />
+          <div className="h-32 rounded-lg bg-gray-200" />
+          <div className="h-32 rounded-lg bg-gray-200" />
+        </div>
+
+        <div className="h-8 w-28 rounded bg-gray-200 mt-8 mb-4" />
+        <div className="flex gap-2">
+          <div className="h-40 flex-1 rounded-lg bg-gray-200" />
+          <div className="h-40 flex-1 rounded-lg bg-gray-200" />
+          <div className="h-40 flex-1 rounded-lg bg-gray-200" />
+          <div className="h-40 flex-1 rounded-lg bg-gray-200" />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -231,20 +280,41 @@ export default function TopPage({ reservation, mode, error }: Props) {
 
         {/* カレンダーめくりボタン */}
         {selectedCurseId && (
-          <div className="absolute right-2 top-0 flex gap-2">
-            <button
-              onClick={() => emblaApi?.scrollPrev()}
-              className="-translate-y-1/2 bg-white shadow rounded-full w-8 h-8"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => emblaApi?.scrollNext()}
-              className="-translate-y-1/2 bg-white shadow rounded-full w-8 h-8"
-            >
-              →
-            </button>
-          </div>
+          <>
+            <div className="absolute right-2 top-0 flex gap-2">
+              <DateJumpCalendarButton
+                onSelect={() => {
+                  setShowCalenadar(!showCalendar);
+                }}
+                showCalendarButtonRef={showCalendarButtonRef}
+              />
+              <button
+                onClick={() => emblaApi?.scrollPrev()}
+                className="-translate-y-1/2 bg-white shadow rounded-full w-8 h-8"
+              >
+                ←
+              </button>
+              <button
+                onClick={() => emblaApi?.scrollNext()}
+                className="-translate-y-1/2 bg-white shadow rounded-full w-8 h-8"
+              >
+                →
+              </button>
+
+              {showCalendar && (
+                <div
+                  className="absolute right-0 top-full mt-0 z-20"
+                  ref={calendarRef}
+                >
+                  <DateJumpCalendar
+                    reservCalendar={reservCalendar}
+                    onSelect={dateClick}
+                    setShowCalenadar={setShowCalenadar}
+                  />
+                </div>
+              )}
+            </div>
+          </>
         )}
         {mode === 'edit' ? (
           <div className="flex items-center flex-col">
