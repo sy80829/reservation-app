@@ -1,30 +1,16 @@
 'use server';
 
 import TopPage from '@/components/Top';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { getOwnReservation } from '@/lib/getOwnReservation';
 
 export default async function page({ params }: { params: { id: string } }) {
   const { id } = await params;
   const idNum = Number(id);
-  //ログインチェック
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect('/login');
-  }
-
-  const user_id = user.id;
   const today = new Date().toLocaleDateString('sv-SE');
 
-  const { data: reservation, error } = await supabase
-    .from('reservations')
-    .select(
-      `
+  const reservation = await getOwnReservation(
+    idNum,
+    `
         id,
         reserv_date,
         reserv_time_st,
@@ -40,15 +26,8 @@ export default async function page({ params }: { params: { id: string } }) {
           name
         )
       `,
-    )
-    .eq('id', idNum)
-    .eq('user_id', user_id)
-    .gte('reserv_date', today)
-    .single();
-
-  if (!reservation || error) {
-    redirect('/top');
-  }
+    (query) => query.gte('reserv_date', today),
+  );
 
   return <TopPage reservation={reservation} mode="edit" />;
 }
