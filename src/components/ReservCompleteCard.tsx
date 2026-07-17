@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReservCompleteCardProps } from '@/types';
 import { useRouter } from 'next/navigation';
 

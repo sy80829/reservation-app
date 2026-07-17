@@ -3,9 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    //コース情報をテーブルから取得
-    let stylists:Stylist[] = [];
-
     const supabase = await createClient();
     const { searchParams } = new URL(req.url)
     const stylistId = Number(searchParams.get('stylistId'))
@@ -43,11 +40,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "例外的なエラーが発生しました"});
   }
 
-}
-
-interface Stylist {
-  id: number;
-  name: string;
-  bio: string;
-  image_url: string;
 }

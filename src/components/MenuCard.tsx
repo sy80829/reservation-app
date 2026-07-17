@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { login } from '@/app/(auth)/login/actions';
 import { logout } from '@/app/(auth)/logout/action';
 import { useRouter } from 'next/navigation';

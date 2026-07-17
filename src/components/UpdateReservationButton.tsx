@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { UpdateReseervationButton } from '@/types';
 
@@ -15,7 +14,6 @@ export default function UpdateReservationButton({
   UpdateReservationButtonClick,
 }: UpdateReseervationButton) {
   const router = useRouter();
-  const supabase = createClient();
 
   const handleCheck = async () => {
     //編集時の選択状態をグローバル状態にセットする

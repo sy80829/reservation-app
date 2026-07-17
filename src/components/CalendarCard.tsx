@@ -1,7 +1,6 @@
 import { Card, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { CalendarCardProps } from '@/types';
-import { useState } from 'react';
 import TimeButton from './TimeButton';
 
 export default function CalendarCard({

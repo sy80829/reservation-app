@@ -1,8 +1,6 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { StylistCardProps, stylistsType } from '@/types';
-// import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { StylistCardProps } from '@/types';
 import { cn } from '@/lib/utils';
 
 export default function StylistCard({

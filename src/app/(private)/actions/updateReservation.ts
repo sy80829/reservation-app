@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { parsedUpdateReservationParams, reservActionProps, updateReservation } from "@/types";
+import { parsedUpdateReservationParams } from "@/types";
 import { redirect } from "next/navigation";
 import { EditReservationData } from '@/atoms/editReservationDataState';
 import { getReservation } from "@/lib/getReservation";

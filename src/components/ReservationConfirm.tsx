@@ -1,11 +1,9 @@
 'use client';
 
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { confirmReservationProps, ReservCompleteCardProps } from '@/types';
+import { confirmReservationProps } from '@/types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import CancelReservationModal from './CancelReservationModal';
-import { useEditReservationDataStore } from '@/atoms/editReservationDataState';
 
 export default function ReservationConfirmPage({
   reservDetails,

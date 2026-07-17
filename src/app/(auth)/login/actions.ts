@@ -13,7 +13,7 @@ export async function login(
     //server.tsのcreateClient
     console.log("redirectTo:",redirectTo);
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data } = await supabase.auth.signInWithOAuth({
   provider: "google",
   options: {
     // redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,

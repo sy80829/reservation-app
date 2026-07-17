@@ -68,8 +68,6 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
     const new_end = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
 
     //target_date
-    const now = new Date();
-    const year = now.getFullYear();
     const formattedDate = `${target_date}`
 
     const parsedParams: reservActionProps = {

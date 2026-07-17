@@ -1,15 +1,11 @@
 import {
   Card,
-  CardAction,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { CourseCardProps } from '@/types';
-import { useState } from 'react';
 
 export default function CourseCard({
   course,

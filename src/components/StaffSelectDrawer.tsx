@@ -1,16 +1,13 @@
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { StaffSelectDrawerType, stylistsType } from '@/types';
+import { StaffSelectDrawerType } from '@/types';
 import StylistCard from './StylistCard';
 import { RadioGroup } from './ui/radio-group';
 
