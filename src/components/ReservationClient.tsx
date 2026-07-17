@@ -1,21 +1,17 @@
 'use client';
 
-import { useSearchParams, useRouter, redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { reservAction } from '@/app/(private)/actions/reservAction';
 import ReservationCard from '@/components/ReservationCard';
-import { Course, ReservCompleteCardProps, Stylist } from '@/types';
-import ReservCompleteCard from './ReservCompleteCard';
+import { Course, Stylist } from '@/types';
+import { useNewReservationDataStore } from '@/atoms/newReservationDataState';
 
 export default function Reservation() {
-  console.log('ReservationClientにきました');
-  const params = useSearchParams();
   const router = useRouter();
-  const courseId = params.get('courseId');
-  const stylistId =
-    params.get('stylistId') === 'null' ? undefined : params.get('stylistId');
-  const date = params.get('date');
-  const time = params.get('time');
+  const { newReservationData, setNewReservationData } =
+    useNewReservationDataStore();
+  const { courseId, stylistId, date, time } = newReservationData;
   const [course, setCourse] = useState<Course>();
   const [stylist, setStylist] = useState<Stylist>();
   //コース取得
@@ -60,10 +56,29 @@ export default function Reservation() {
   }
 
   if (!course) {
-    return <p>読み込み中...</p>;
+    return (
+      <div className="max-w-md mx-auto mt-12 mb-12 animate-pulse rounded-lg border p-6">
+        <div className="h-5 w-24 rounded bg-gray-200 mx-auto mb-4" />
+        <div className="space-y-2">
+          <div className="h-4 w-3/4 rounded bg-gray-200" />
+          <div className="h-4 w-2/3 rounded bg-gray-200" />
+          <div className="h-4 w-1/2 rounded bg-gray-200" />
+          <div className="h-4 w-1/2 rounded bg-gray-200" />
+          <div className="h-4 w-1/3 rounded bg-gray-200" />
+        </div>
+      </div>
+    );
   }
 
   const handleClick = async () => {
+    // 送信後は不要になるのでドラフトをクリア
+    setNewReservationData({
+      courseId: null,
+      stylistId: null,
+      date: null,
+      time: null,
+    });
+
     //　予約処理
     let result = await reservAction({
       new_start: time + ':00',

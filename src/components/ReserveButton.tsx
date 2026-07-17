@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { ReserveButtonProps } from '@/types';
+import { useNewReservationDataStore } from '@/atoms/newReservationDataState';
 
 export default function ReserveButton({
   isSelect,
@@ -13,47 +13,17 @@ export default function ReserveButton({
   selectedTime,
 }: ReserveButtonProps) {
   const router = useRouter();
-  const supabase = createClient();
+  const { setNewReservationData } = useNewReservationDataStore();
 
   const handleCheck = async () => {
-    // const { data } = await supabase.auth.getUser();
-
-    // if (!data.user) {
-    //   router.push('/login');
-    //   return;
-    // }
-
-    console.log('stylistId:', stylistId);
-
-    // スタイリストIDがある場合URLに含める
-    if (stylistId) {
-      console.log('push前', {
-        courseId,
-        stylistId,
-        selectedDate,
-        selectedTime,
-      });
-      router.push(
-        `/reservation?courseId=${courseId}&stylistId=${stylistId}&date=${selectedDate}&time=${selectedTime}`,
-      );
-    } else {
-      console.log('push前', {
-        courseId,
-        selectedDate,
-        selectedTime,
-      });
-      router.push(
-        `/reservation?courseId=${courseId}&date=${selectedDate}&time=${selectedTime}`,
-      );
-    }
+    setNewReservationData({
+      courseId,
+      stylistId,
+      date: selectedDate,
+      time: selectedTime,
+    });
+    router.push('/reservation');
   };
-
-  console.log('props1', {
-    courseId,
-    stylistId,
-    selectedDate,
-    selectedTime,
-  });
 
   return (
     <div className="flex justify-center mt-4">
