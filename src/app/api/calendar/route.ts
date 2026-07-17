@@ -1,7 +1,7 @@
 // app/api/calendar/route.ts
 
 import { createClient } from "@/lib/supabase/server";
-import { calendarProps, formatedReservSlots, formattedReservations, Reservation, reservCalendar, reservSlots, reservTime, StylistResult } from "@/types";
+import { formatedReservSlots, formattedReservations, Reservation, reservCalendar, reservSlots, reservTime, StylistResult } from "@/types";
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
   }
 
   let data;
-  let error;
 
   //カレンダー生成
   //スタイリスト予約あり
@@ -50,9 +49,9 @@ export async function GET(req: NextRequest) {
     //   ]
     console.log("parseExcludeId:", parseExcludeId);
     if (!parseExcludeId) {
-      ({ data, error } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed").eq("stylist_id", parsedStylistId).eq("is_canceled", false));
+      ({ data } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed").eq("stylist_id", parsedStylistId).eq("is_canceled", false));
     } else {
-      ({ data, error } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed").eq("stylist_id", parsedStylistId).eq("is_canceled", false).neq('id', parseExcludeId));
+      ({ data } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed").eq("stylist_id", parsedStylistId).eq("is_canceled", false).neq('id', parseExcludeId));
     }
 
     const reservations : Reservation[] = data ?? [];
@@ -114,14 +113,14 @@ export async function GET(req: NextRequest) {
     //   { reserv_date: "2026-03-17", start: "15:00:00", end: "16:30:00" },
     //   { reserv_date: "2026-03-19", start: "10:30:00", end: "12:30:00" }
     //   ]
-    const reservations : Reservation[] = data ?? [];
-
     console.log("parseExcludeId:", parseExcludeId);
     if (!parseExcludeId) {
-      ({ data, error } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed, stylist_id").eq("is_canceled", false));
+      ({ data } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed, stylist_id").eq("is_canceled", false));
     } else {
-      ({ data, error } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed, stylist_id").eq("is_canceled", false).neq('id', parseExcludeId));
+      ({ data } = await supabase.from("reservations").select("reserv_date, reserv_time_st, reserv_time_ed, stylist_id").eq("is_canceled", false).neq('id', parseExcludeId));
     }
+
+    const reservations : Reservation[] = data ?? [];
 
     //時間を分に変換
     const formattedReservations = reservations.map(r => ({
@@ -151,7 +150,11 @@ export async function GET(req: NextRequest) {
     //            { start: 780, end: 840 }   // 13:00-14:00
     //           },
     //   }
-    const reservationMap = createReservationMapByStylistId(formattedReservations);
+    //予約実績のないスタイリストも空き扱いで対象に含めるため、全スタイリストIDを取得
+    const { data: allStylistsData } = await supabase.from("stylists").select("id");
+    const allStylistIds = (allStylistsData ?? []).map((s) => String(s.id));
+
+    const reservationMap = createReservationMapByStylistId(formattedReservations, allStylistIds);
 
     const result: reservCalendar[] = [];
 
@@ -283,8 +286,13 @@ function createReservationMapByDate(reservations: formattedReservations[]) {
 //            { start: 780, end: 840 }   // 13:00-14:00
 //           },
 //   }
-function createReservationMapByStylistId(reservations: formattedReservations[]) {
+function createReservationMapByStylistId(reservations: formattedReservations[], allStylistIds: string[]) {
   const stylistMap = new Map<string, formattedReservations[]>();
+
+  // 予約実績のないスタイリストも空き扱いで対象に含めるため、先に全員分を空配列で初期化
+  for (const id of allStylistIds) {
+    stylistMap.set(id, []);
+  }
 
   // stylistごとにまとめる
   for (const r of reservations) {
