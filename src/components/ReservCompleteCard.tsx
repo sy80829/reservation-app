@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReservCompleteCardProps } from '@/types';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type Props = {
   reservDetails: ReservCompleteCardProps;
@@ -12,12 +13,13 @@ export default function ReservCompleteCard({ reservDetails }: Props) {
   const router = useRouter();
   return (
     <div>
-      <img
+      <Image
         src="/images/11433360.png"
+        alt="予約完了"
         width={80}
         height={80}
         className="mx-auto mt-5 mb-5"
-      ></img>
+      />
       <p className="text-center text-2xl font-bold">予約が確定しました</p>
       <Card className="max-w-xs mx-auto mt-5 mb-5">
         <CardHeader className="text-center space-y-2">

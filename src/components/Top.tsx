@@ -18,6 +18,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
 import ReserveButton from '@/components/ReserveButton';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import UpdateReservationButton from './UpdateReservationButton';
 import { useEditReservationDataStore } from '@/atoms/editReservationDataState';
 import DateJumpCalendar from './DateJumpCalendar';
@@ -84,57 +85,40 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
   });
-  //コース取得
-  const fetchCourse = async () => {
-    try {
-      const res = await fetch('/api/course'); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-      setCourses(
-        data.courses.map((s: RawCourse) => ({
-          ...s,
-          id: String(s.id),
-        })),
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  //スタイリスト取得
-  const fetchStylist = async () => {
-    try {
-      const res = await fetch('/api/stylist'); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-
-      console.log('APIレスポンス', data); // ←追加
-
-      setStylists(
-        data.stylists.map((s: RawStylist) => ({
-          ...s,
-          id: String(s.id),
-        })),
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  //予約カレンダー取得
-  const fetchCalendar = async () => {
-    try {
-      const res = await fetch(
-        `/api/calendar?course_id=${selectedCourseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
-      );
-      const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-
-      setRservCalendar(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   //コース、スタイリスト取得
   // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    //コース取得
+    const fetchCourse = async () => {
+      try {
+        const res = await fetch('/api/course'); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setCourses(
+          data.courses.map((s: RawCourse) => ({
+            ...s,
+            id: String(s.id),
+          })),
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    //スタイリスト取得
+    const fetchStylist = async () => {
+      try {
+        const res = await fetch('/api/stylist'); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setStylists(
+          data.stylists.map((s: RawStylist) => ({
+            ...s,
+            id: String(s.id),
+          })),
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchCourse();
     fetchStylist();
   }, []);
@@ -148,9 +132,21 @@ export default function TopPage({ reservation, mode, error }: Props) {
 
   //コースが変わるたび日付と時間をリセット
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    //予約カレンダー取得
+    const fetchCalendar = async () => {
+      try {
+        const res = await fetch(
+          `/api/calendar?course_id=${selectedCourseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
+        );
+        const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setRservCalendar(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchCalendar();
-  }, [selectedCourseId, selectedStylist]);
+  }, [selectedCourseId, selectedStylist, excludeId]);
 
   //スタイリスト選択時発火
   const handleStylistSelect = (id: string) => {
@@ -246,7 +242,13 @@ export default function TopPage({ reservation, mode, error }: Props) {
           </div>
           {selectedStylistData && (
             <div className="flex items-center gap-2">
-              <img src={selectedStylistData.image_url} className="w-9 h-9" />
+              <Image
+                src={selectedStylistData.image_url}
+                alt={selectedStylistData.name}
+                width={36}
+                height={36}
+                className="w-9 h-9"
+              />
               <span className="font-bold -mr-1">
                 {selectedStylistData.name}
               </span>
@@ -263,14 +265,14 @@ export default function TopPage({ reservation, mode, error }: Props) {
         </div>
       </div>
       <div className="relative pt-10 sm:pt-5">
-        <div className="overflow-hidden" px-2 ref={emblaRef}>
+        <div className="overflow-hidden px-2" ref={emblaRef}>
           {/* calendar表示 */}
           <div className="flex pb-2 -mx-2 mt-2">
             {selectedCourseId &&
               reservCalendar.map((calendar) => (
                 <div
                   key={calendar.date}
-                  className="flex-[0_0_calc(100%/2)] md:flex-[0_0_calc(100%/7)] px-1 md:px-2"
+                  className="flex-[0_0_calc(100%/2)] sm:flex-[0_0_calc(100%/3)] md:flex-[0_0_calc(100%/4)] lg:flex-[0_0_calc(100%/7)] px-1 md:px-2"
                 >
                   <CalendarCard
                     calendar={calendar}
@@ -314,6 +316,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
                 >
                   <DateJumpCalendar
                     reservCalendar={reservCalendar}
+                    selectedDate={selectedDate}
                     onSelect={dateClick}
                     setShowCalenadar={setShowCalenadar}
                   />

@@ -14,33 +14,31 @@ export default function Reservation() {
   const { courseId, stylistId, date, time } = newReservationData;
   const [course, setCourse] = useState<Course>();
   const [stylist, setStylist] = useState<Stylist>();
-  //コース取得
-  const fetchCourse = async () => {
-    try {
-      const res = await fetch(`/api/course?courseId=${courseId}`); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-      setCourse(data.course);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  //スタイリスト取得
-  const fetchStylist = async () => {
-    try {
-      const res = await fetch(`/api/stylist?stylistId=${stylistId}`); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-      setStylist(data.stylist);
-      console.error('data.name:', data.stylist.name);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
+    //コース取得
+    const fetchCourse = async () => {
+      try {
+        const res = await fetch(`/api/course?courseId=${courseId}`); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setCourse(data.course);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    //スタイリスト取得
+    const fetchStylist = async () => {
+      try {
+        const res = await fetch(`/api/stylist?stylistId=${stylistId}`); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setStylist(data.stylist);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     if (courseId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCourse();
       if (stylistId) {
         fetchStylist();

@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
+import Image from 'next/image';
 
 export default function Header() {
   const router = useRouter();
@@ -17,10 +18,10 @@ export default function Header() {
   //ハンバーガーメニューのボタン
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
 
   //user情報取得
   useEffect(() => {
+    const supabase = createClient();
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
@@ -63,8 +64,11 @@ export default function Header() {
 
           <div className="flex items-center gap-4">
             {user && (
-              <img
+              <Image
                 src={user.user_metadata?.avatar_url}
+                alt={user.user_metadata?.name ?? 'ユーザーアイコン'}
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded-full"
               />
             )}

@@ -13,42 +13,41 @@ export default function UpdateReservationClient({ id }: { id: string }) {
   const [stylist, setStylist] = useState<Stylist>();
   const { editReservationData } = useEditReservationDataStore();
 
-  //UI表示用　コース取得
-  const fetchCourse = async () => {
-    try {
-      const res = await fetch(
-        `/api/course?courseId=${editReservationData.courseId}`,
-      ); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-      setCourse(data.course);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  //UI表示用　スタイリスト取得
-  const fetchStylist = async () => {
-    try {
-      const res = await fetch(
-        `/api/stylist?stylistId=${editReservationData.stylistId}`,
-      ); //APIを呼び出す
-      const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-      setStylist(data.stylist);
-      console.error('data.name:', data.stylist.name);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
+  // editReservationDataはマウント時点の値だけ使えばよいので依存配列は空でよい
   useEffect(() => {
+    //UI表示用　コース取得
+    const fetchCourse = async () => {
+      try {
+        const res = await fetch(
+          `/api/course?courseId=${editReservationData.courseId}`,
+        ); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setCourse(data.course);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    //UI表示用　スタイリスト取得
+    const fetchStylist = async () => {
+      try {
+        const res = await fetch(
+          `/api/stylist?stylistId=${editReservationData.stylistId}`,
+        ); //APIを呼び出す
+        const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
+        setStylist(data.stylist);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     if (editReservationData.courseId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCourse();
       if (editReservationData.stylistId) {
         fetchStylist();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (
