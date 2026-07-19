@@ -1,20 +1,19 @@
-import { cn } from '@/lib/utils';
 import { reservCalendar } from '@/types';
-import React, { RefObject, useState } from 'react';
 import { Calendar } from './ui/calendar';
+import { ja } from 'date-fns/locale';
 type Props = {
   reservCalendar: reservCalendar[];
+  selectedDate: string | null;
   onSelect: (date: string) => void;
   setShowCalenadar: (showCalendar: boolean) => void;
 };
 
 export default function DateJumpCalendar({
   reservCalendar,
+  selectedDate,
   onSelect,
   setShowCalenadar,
 }: Props) {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
   // "2026-07-17" → Date
   function stringToDate(dateStr: string): Date {
     const [year, month, day] = dateStr.split('-').map(Number);
@@ -38,8 +37,7 @@ export default function DateJumpCalendar({
   const handleSelect = (date: Date | undefined) => {
     if (!date) return; // undefinedなら何もしない
     const dateStr = dateToString(date); // Date → "2026-07-17" に変換
-    setSelectedDate(dateStr); // 自分のstateを更新
-    onSelect(dateStr); // 親から受け取ったonSelectを呼ぶ（Top.tsxのdateClickへ）
+    onSelect(dateStr); // 親から受け取ったonSelectを呼ぶ（Top.tsxのdateClickへ、selectedDateもここで更新される）
     setShowCalenadar(false);
   };
 
@@ -49,6 +47,8 @@ export default function DateJumpCalendar({
       mode="single"
       disabled={dateCheck}
       selected={selectedDate ? stringToDate(selectedDate) : undefined}
+      defaultMonth={selectedDate ? stringToDate(selectedDate) : undefined}
+      locale={ja}
       className="border rounded-lg shadow-lg bg-white"
     />
   );
