@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,12 +21,19 @@ type Props = {
 };
 
 export default function CancelReservationModal({ id, version }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleClick = async () => {
     //　キャンセル処理
-    await cancelReservation({
-      id,
-      version,
-    });
+    setIsLoading(true);
+    try {
+      await cancelReservation({
+        id,
+        version,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div>
@@ -46,11 +53,12 @@ export default function CancelReservationModal({ id, version }: Props) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              disabled={isLoading}
               onClick={() => {
                 handleClick();
               }}
             >
-              Continue
+              {isLoading ? '処理中...' : 'Continue'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
