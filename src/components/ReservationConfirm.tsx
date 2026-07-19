@@ -27,8 +27,9 @@ export default function ReservationConfirmPage({
           <div className="mx-auto text-left space-y-1">
             <div>日付：{reservDetails.reserv_date}</div>
             <div>
-              時間：{reservDetails.reserv_time_st}~
-              {reservDetails.reserv_time_ed}({reservDetails.courses.duration}分)
+              時間：{reservDetails.reserv_time_st.slice(0, 5)}~
+              {reservDetails.reserv_time_ed.slice(0, 5)}(
+              {reservDetails.courses.duration}分)
             </div>
             <div>コース：{reservDetails.courses.name}</div>
             <div>スタイリスト：{reservDetails.stylists.name ?? '指名なし'}</div>
