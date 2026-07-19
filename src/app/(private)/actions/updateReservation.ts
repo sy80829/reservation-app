@@ -46,14 +46,12 @@ export async function updateRservation ( { reservationId, editReservationData } 
 
     //整形
     const parsedStylistId =
-        // stylist_id === null ? null : Number(stylist_id);
         editReservationData.stylistId === null ? null : Number(editReservationData.stylistId);
-    
+
     if (parsedStylistId !== null && isNaN(parsedStylistId)) {
         throw new Error("invalid stylist_id");
     }
-    
-    // const parsedCourseId = Number(course_id);
+
     const parsedCourseId = Number(editReservationData.courseId);
 
     //course_id実在確認
@@ -74,7 +72,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
 
     // startをdateに変換
     const toISODate = (dateStr: string, timeStr: string) => {
-        // const year = new Date().getFullYear();
         const [year, month, day] = dateStr.split("-");
         const [hour, minute] = timeStr.split(":");
         console.log("year:", year);
@@ -94,7 +91,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
     };
 
     // start作る
-    // const startDate = toISODate(target_date, new_start);
     const startDate = toISODate(editReservationData.date, new_start);
     // end作る
     const endDate = calculateEndTime(startDate, course.duration);
@@ -102,9 +98,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
     const new_end = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
 
     //target_date
-    // const now = new Date();
-    // const year = now.getFullYear();
-    // const formattedDate = `${target_date}`
     const formattedDate = `${editReservationData.date}`
 
     const parsedParams: parsedUpdateReservationParams = {

@@ -29,12 +29,6 @@ export default function CourseCard({
             {course.duration}分 / ¥{course.price}
           </CardDescription>
         </CardHeader>
-        {/* <CardContent>
-          <p>Card Content</p>
-        </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter> */}
       </Card>
     </div>
   );

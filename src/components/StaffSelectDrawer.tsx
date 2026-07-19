@@ -35,17 +35,6 @@ export default function StaffSelectDrawer({
           </SheetHeader>
           <RadioGroup value={selectedStylist} onValueChange={onSelect}>
             {stylists?.map((stylist) => (
-              // return (
-              //   <div className="flex items-center gap-5">
-              //     {/* DBから取得した値で置き換え */}
-              //     <Avatar className="w-20 h-20">
-              //       <AvatarImage src={stylist.image} />
-              //       <AvatarFallback>ユーザー名</AvatarFallback>
-              //     </Avatar>
-              //     <div>{stylist.name}</div>
-              //     <div>{stylist.text}</div>
-              //   </div>
-              // );
               <StylistCard
                 key={stylist.id}
                 stylist={stylist}

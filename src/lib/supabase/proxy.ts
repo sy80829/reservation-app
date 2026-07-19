@@ -93,33 +93,6 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-
-
-  // //リダイレクト
-  // if (!user && isProtected && !isRegisterPage) {
-  //   const isRegistered = await userCheck()
-  //   const url = request.nextUrl.clone()
-  //   // url.pathname = '/login'
-  //   // return NextResponse.redirect(url)
-  //   if (!isRegistered) {
-  //     const url =request.nextUrl.clone()
-  //     url.pathname ='/registerUser'
-  //     url.searchParams.set(
-  //     'redirectTo',
-  //     request.nextUrl.pathname + request.nextUrl.search
-  //     )
-
-  //     return NextResponse.redirect(url)
-  //   }
-  //   url.pathname = '/login'
-  //   url.searchParams.set(
-  //   'redirectTo',
-  //   request.nextUrl.pathname + request.nextUrl.search
-  //   )
-  //   console.log("リダイレクトurl:",url);
-  //   return NextResponse.redirect(url)
-  // }
-
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

@@ -19,9 +19,6 @@ export default function StylistCard({
             : 'hover:bg-accent',
         )}
       >
-        {/* <RadioGroupItem value={stylist.id} id={stylist.id} /> */}
-
-        {/* DBから取得した値で置き換え */}
         <Avatar className="w-20 h-20">
           <AvatarImage src={stylist.image_url} />
           <AvatarFallback>ユーザー名</AvatarFallback>

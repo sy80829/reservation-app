@@ -41,7 +41,6 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
 
     // startをdateに変換
     const toISODate = (dateStr: string, timeStr: string) => {
-        // const year = new Date().getFullYear();
         const [year, month, day] = dateStr.split("-");
         const [hour, minute] = timeStr.split(":");
         console.log("year:", year);

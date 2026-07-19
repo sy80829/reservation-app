@@ -51,7 +51,6 @@ export default function Reservation() {
     console.log('date:', date);
     console.log('time:', time);
     console.log('コースID、日付、時間がありません');
-    // router.push('/');
     return null;
   }
 
@@ -116,10 +115,7 @@ export default function Reservation() {
         <button
           onClick={() => {
             {
-              router.push(
-                // `/top?courseId=${courseId}&stylistId=${stylistId}&date=${date}&time=${time}`,
-                `/top`,
-              );
+              router.push(`/top`);
             }
           }}
           className="bg-[#22C55E] text-white hover:bg-[#1fb456] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl"
