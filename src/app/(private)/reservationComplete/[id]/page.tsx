@@ -2,6 +2,7 @@
 
 import ReservCompleteCard from '@/components/ReservCompleteCard';
 import { getOwnReservation } from '@/lib/getOwnReservation';
+import { ReservCompleteCardProps } from '@/types';
 
 export default async function Page({
   params,
@@ -13,7 +14,7 @@ export default async function Page({
   const { id } = await params;
   const numId = Number(id);
 
-  const data = await getOwnReservation(
+  const data = await getOwnReservation<ReservCompleteCardProps>(
     numId,
     `
     reserv_date,

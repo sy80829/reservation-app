@@ -2,13 +2,14 @@
 
 import TopPage from '@/components/Top';
 import { getOwnReservation } from '@/lib/getOwnReservation';
+import { TopPageProps } from '@/types';
 
 export default async function page({ params }: { params: { id: string } }) {
   const { id } = await params;
   const idNum = Number(id);
   const today = new Date().toLocaleDateString('sv-SE');
 
-  const reservation = await getOwnReservation(
+  const reservation = await getOwnReservation<TopPageProps>(
     idNum,
     `
         id,

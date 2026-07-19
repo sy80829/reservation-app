@@ -118,6 +118,9 @@ export async function updateRservation ( { reservationId, editReservationData } 
         p_new_start: parsedParams.new_start,
         p_new_end: parsedParams.new_end,
         p_course_id : parsedParams.course_id,
+        // Supabase生成の型ではp_stylist_idがnumber必須になっているが、
+        // DB関数はnullを正しく処理する（指名なし予約）ため型を無視する
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         p_stylist_id: parsedParams.stylist_id as any,
         p_user_id: user.id,
         p_version: editReservationData.version,

@@ -37,8 +37,10 @@ export default function Reservation() {
     }
   };
 
+  // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
     if (courseId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCourse();
       if (stylistId) {
         fetchStylist();
@@ -79,7 +81,7 @@ export default function Reservation() {
     });
 
     //　予約処理
-    let result = await reservAction({
+    const result = await reservAction({
       new_start: time + ':00',
       target_date: date,
       course_id: courseId,

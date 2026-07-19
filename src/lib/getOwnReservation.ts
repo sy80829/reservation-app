@@ -3,9 +3,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-export async function getOwnReservation<T = any>(
+export async function getOwnReservation<T = unknown>(
   id: number,
   selectQuery: string,
+  // Supabaseのクエリビルダーの型は複雑なため、あえてany経由で受け渡す
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modify?: (query: any) => any,
 ): Promise<T> {
   const supabase = await createClient();

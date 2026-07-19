@@ -6,6 +6,7 @@ import MenuCard from './MenuCard';
 import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import type { User } from '@supabase/supabase-js';
 
 export default function Header() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
   //ハンバーガーメニューのボタン
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
 
   //user情報取得

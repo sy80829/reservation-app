@@ -8,6 +8,10 @@ import type {
   stylistsType,
   TopPageProps,
 } from '@/types';
+
+// API取得直後（idがstring変換前）の生データ型
+type RawCourse = Omit<CourseCardType, 'id'> & { id: number };
+type RawStylist = Omit<stylistsType, 'id'> & { id: number };
 import { useEffect, useRef, useState } from 'react';
 import CalendarCard from '@/components/CalendarCard';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -28,11 +32,27 @@ type Props = {
 export default function TopPage({ reservation, mode, error }: Props) {
   const router = useRouter();
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null); // 選択中のコース
+  // 選択中のコース（予約確認ページから遷移した場合はreservationの内容で初期化）
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(
+    () => (reservation ? String(reservation.courses.id) : null),
+  );
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
-  const [selectedStylist, setselectedStylist] = useState<string | null>(null); //選択中のスタイリスト
-  const [selectedDate, setSelectedDate] = useState<string | null>(null); //選択中の日付
-  const [selectedTime, setSelectedTime] = useState<string | null>(null); //選択中の時間
+  //選択中のスタイリスト（フリー予約の場合は非選択状態にする）
+  const [selectedStylist, setselectedStylist] = useState<string | null>(() =>
+    reservation
+      ? reservation.is_free
+        ? null
+        : String(reservation.stylists.id)
+      : null,
+  );
+  //選択中の日付
+  const [selectedDate, setSelectedDate] = useState<string | null>(
+    () => reservation?.reserv_date ?? null,
+  );
+  //選択中の時間
+  const [selectedTime, setSelectedTime] = useState<string | null>(() =>
+    reservation ? reservation.reserv_time_st.slice(0, 5) : null,
+  );
   const [reservCalendar, setRservCalendar] = useState<reservCalendar[]>([]);
   const [open, setOpen] = useState(false); //スタイリストモーダル状態
   const excludeId = mode === 'edit' ? reservation?.id : null; //予約変更画面
@@ -60,22 +80,6 @@ export default function TopPage({ reservation, mode, error }: Props) {
     };
   }, []);
 
-  useEffect(() => {
-    //予約確認ぺージから遷移したときの初期表示
-    if (reservation) {
-      setSelectedCourseId(String(reservation.courses.id));
-      setselectedStylist(String(reservation.stylists.id));
-      setSelectedDate(reservation.reserv_date);
-      setSelectedTime(reservation.reserv_time_st.slice(0, 5));
-      //フリー予約の場合スタイリストidは非選択状態にする
-      if (reservation.is_free) {
-        setselectedStylist(null);
-      } else {
-        setselectedStylist(String(reservation.stylists.id));
-      }
-    }
-  }, [reservation]);
-
   //Embla初期化
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -86,7 +90,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
       const res = await fetch('/api/course'); //APIを呼び出す
       const data = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
       setCourses(
-        data.courses.map((s: any) => ({
+        data.courses.map((s: RawCourse) => ({
           ...s,
           id: String(s.id),
         })),
@@ -104,7 +108,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
       console.log('APIレスポンス', data); // ←追加
 
       setStylists(
-        data.stylists.map((s: any) => ({
+        data.stylists.map((s: RawStylist) => ({
           ...s,
           id: String(s.id),
         })),
@@ -128,7 +132,9 @@ export default function TopPage({ reservation, mode, error }: Props) {
   };
 
   //コース、スタイリスト取得
+  // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCourse();
     fetchStylist();
   }, []);
@@ -142,6 +148,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
 
   //コースが変わるたび日付と時間をリセット
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCalendar();
   }, [selectedCourseId, selectedStylist]);
 

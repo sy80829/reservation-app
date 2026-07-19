@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Supabase CLIが自動生成するファイル（手動編集しないためlint対象外）
+    "database.types.ts",
+    "database.supabase.ts",
+    "src/types/supabase.ts",
   ]),
 ]);
 

@@ -40,8 +40,10 @@ export default function UpdateReservationClient({ id }: { id: string }) {
     }
   };
 
+  // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
     if (editReservationData.courseId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCourse();
       if (editReservationData.stylistId) {
         fetchStylist();
