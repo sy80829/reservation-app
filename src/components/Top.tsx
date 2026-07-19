@@ -28,7 +28,7 @@ type Props = {
 export default function TopPage({ reservation, mode, error }: Props) {
   const router = useRouter();
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
-  const [selectedCurseId, setSelectedCurseId] = useState<string | null>(null); // 選択中のコース
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null); // 選択中のコース
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
   const [selectedStylist, setselectedStylist] = useState<string | null>(null); //選択中のスタイリスト
   const [selectedDate, setSelectedDate] = useState<string | null>(null); //選択中の日付
@@ -63,7 +63,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
   useEffect(() => {
     //予約確認ぺージから遷移したときの初期表示
     if (reservation) {
-      setSelectedCurseId(String(reservation.courses.id));
+      setSelectedCourseId(String(reservation.courses.id));
       setselectedStylist(String(reservation.stylists.id));
       setSelectedDate(reservation.reserv_date);
       setSelectedTime(reservation.reserv_time_st.slice(0, 5));
@@ -117,7 +117,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const fetchCalendar = async () => {
     try {
       const res = await fetch(
-        `/api/calendar?course_id=${selectedCurseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
+        `/api/calendar?course_id=${selectedCourseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
       );
       const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
 
@@ -135,7 +135,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
 
   // ユーザー操作だけリセット
   const handleCourseSelect = (id: string) => {
-    setSelectedCurseId(id);
+    setSelectedCourseId(id);
     setSelectedDate(null);
     setSelectedTime(null);
   };
@@ -143,7 +143,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
   //コースが変わるたび日付と時間をリセット
   useEffect(() => {
     fetchCalendar();
-  }, [selectedCurseId, selectedStylist]);
+  }, [selectedCourseId, selectedStylist]);
 
   //スタイリスト選択時発火
   const handleStylistSelect = (id: string) => {
@@ -160,7 +160,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
       version: reservation?.version,
       date: selectedDate,
       time: selectedTime,
-      courseId: selectedCurseId,
+      courseId: selectedCourseId,
       stylistId: selectedStylist,
     });
   };
@@ -219,14 +219,13 @@ export default function TopPage({ reservation, mode, error }: Props) {
             <CourseCard
               key={course.id}
               course={course}
-              isSelected={course.id === selectedCurseId}
+              isSelected={course.id === selectedCourseId}
               onSelect={() => handleCourseSelect(course.id)}
             />
           ))}
         </div>
       </div>
       <div className="flex pt-5 gap-4">
-        {/* <div className="pt-5 text-2xl pb-5 font-bold">空き状況</div> */}
         <div className="text-2xl font-bold">空き状況</div>
         <div className="flex gap-4">
           <div>
@@ -256,11 +255,11 @@ export default function TopPage({ reservation, mode, error }: Props) {
           )}
         </div>
       </div>
-      <div className="relative pt-5">
+      <div className="relative pt-10 sm:pt-5">
         <div className="overflow-hidden" px-2 ref={emblaRef}>
           {/* calendar表示 */}
           <div className="flex pb-2 -mx-2 mt-2">
-            {selectedCurseId &&
+            {selectedCourseId &&
               reservCalendar.map((calendar) => (
                 <div
                   key={calendar.date}
@@ -279,7 +278,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
         </div>
 
         {/* カレンダーめくりボタン */}
-        {selectedCurseId && (
+        {selectedCourseId && (
           <>
             <div className="absolute right-2 top-0 flex gap-2">
               <DateJumpCalendarButton
@@ -318,15 +317,14 @@ export default function TopPage({ reservation, mode, error }: Props) {
         )}
         {mode === 'edit' ? (
           <div className="flex items-center flex-col">
-            {/* <button>変更を確定する</button> */}
             <UpdateReservationButton
               isSelect={
-                selectedCurseId != null &&
+                selectedCourseId != null &&
                 selectedDate != null &&
                 selectedTime != null
               }
               id={reservation?.id}
-              courseId={selectedCurseId}
+              courseId={selectedCourseId}
               stylistId={selectedStylist}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
@@ -342,14 +340,14 @@ export default function TopPage({ reservation, mode, error }: Props) {
             </button>
           </div>
         ) : (
-          selectedCurseId && (
+          selectedCourseId && (
             <ReserveButton
               isSelect={
-                selectedCurseId != null &&
+                selectedCourseId != null &&
                 selectedDate != null &&
                 selectedTime != null
               }
-              courseId={selectedCurseId}
+              courseId={selectedCourseId}
               stylistId={selectedStylist}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
