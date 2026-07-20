@@ -2,12 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
-
-const registerUserSchema = z.object({
-  name: z.string().trim().min(1, 'name_required').max(50, 'name_too_long'),
-  tel: z.string().trim().regex(/^0\d{9,10}$/, 'tel_invalid'),
-});
+import { registerUserSchema } from '@/lib/registerUserSchema';
 
 export async function registerUser(formData: FormData) {
   const supabase = await createClient();

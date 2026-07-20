@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReservationCardProps } from '@/types';
 
 // "11:30" + 90分 → "13:00"
-function calculateEndTime(startTime: string, duration: number): string {
+export function calculateEndTime(startTime: string, duration: number): string {
   const [hour, minute] = startTime.split(':').map(Number);
   const totalMinutes = hour * 60 + minute + duration;
   const endHour = Math.floor(totalMinutes / 60);
