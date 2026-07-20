@@ -18,19 +18,17 @@ export default function UpdateReservationButton({
   };
 
   return (
-    <div className="flex justify-center mt-4">
-      <button
-        onClick={() => handleCheck()}
-        disabled={!isSelect}
-        className={cn(
-          'w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl',
-          isSelect
-            ? 'bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer'
-            : 'bg-gray-200 opacity-50 cursor-not-allowed',
-        )}
-      >
-        予約を変更する
-      </button>
-    </div>
+    <button
+      onClick={() => handleCheck()}
+      disabled={!isSelect}
+      className={cn(
+        'w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mt-4',
+        isSelect
+          ? 'bg-[#EC1C5E] text-white hover:bg-[#d81a55] transition cursor-pointer'
+          : 'bg-gray-200 opacity-50 cursor-not-allowed',
+      )}
+    >
+      予約を変更する
+    </button>
   );
 }

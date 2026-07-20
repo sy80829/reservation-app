@@ -89,9 +89,19 @@ export default function TopPage({ reservation, mode, error }: Props) {
   }, []);
 
   //Embla初期化
+  // slidesToScrollはデフォルト(1枚単位)のままにする。'auto'にするとscrollTo(index)の
+  // indexがスライド番号ではなくグループ番号扱いになり、日付ジャンプの飛び先がずれるため
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
   });
+
+  // 矢印ボタン用：画面に映っている枚数分まとめて進める
+  const scrollByPage = (direction: 1 | -1) => {
+    if (!emblaApi) return;
+    const slidesPerView = emblaApi.slidesInView().length || 1;
+    const current = emblaApi.selectedScrollSnap();
+    emblaApi.scrollTo(current + direction * slidesPerView);
+  };
   //コース、スタイリスト取得
   // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
@@ -301,14 +311,14 @@ export default function TopPage({ reservation, mode, error }: Props) {
           />
           {/* カレンダーめくりボタン */}
           <button
-            onClick={() => emblaApi?.scrollPrev()}
+            onClick={() => scrollByPage(-1)}
             disabled={calendarLoading}
             className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             ←
           </button>
           <button
-            onClick={() => emblaApi?.scrollNext()}
+            onClick={() => scrollByPage(1)}
             disabled={calendarLoading}
             className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
           >

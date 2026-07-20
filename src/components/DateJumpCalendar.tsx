@@ -1,6 +1,12 @@
+import { useState, useRef, type TouchEvent } from 'react';
 import { reservCalendar } from '@/types';
 import { Calendar } from './ui/calendar';
 import { ja } from 'date-fns/locale';
+import { addMonths, subMonths } from 'date-fns';
+
+// これ未満の横移動はタップ/誤操作とみなし月送りしない
+const SWIPE_THRESHOLD_PX = 40;
+
 type Props = {
   reservCalendar: reservCalendar[];
   selectedDate: string | null;
@@ -19,6 +25,35 @@ export default function DateJumpCalendar({
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day); // monthは0始まりなので-1
   }
+
+  //表示中の月（スワイプで月送りできるようcontrolledにする）
+  const [month, setMonth] = useState<Date>(
+    selectedDate ? stringToDate(selectedDate) : new Date(),
+  );
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    const t = e.touches[0];
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+    if (!start) return;
+
+    const t = e.changedTouches[0];
+    const deltaX = t.clientX - start.x;
+    const deltaY = t.clientY - start.y;
+
+    // 横方向のスワイプとみなせる場合だけ月を切り替える（縦スクロールは邪魔しない）
+    if (
+      Math.abs(deltaX) > SWIPE_THRESHOLD_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY)
+    ) {
+      setMonth((prev) => (deltaX > 0 ? subMonths(prev, 1) : addMonths(prev, 1)));
+    }
+  };
 
   // Date → "2026-07-17"
   function dateToString(date: Date): string {
@@ -42,14 +77,17 @@ export default function DateJumpCalendar({
   };
 
   return (
-    <Calendar
-      onSelect={handleSelect}
-      mode="single"
-      disabled={dateCheck}
-      selected={selectedDate ? stringToDate(selectedDate) : undefined}
-      defaultMonth={selectedDate ? stringToDate(selectedDate) : undefined}
-      locale={ja}
-      className="border rounded-lg shadow-lg bg-white"
-    />
+    <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <Calendar
+        onSelect={handleSelect}
+        mode="single"
+        disabled={dateCheck}
+        selected={selectedDate ? stringToDate(selectedDate) : undefined}
+        month={month}
+        onMonthChange={setMonth}
+        locale={ja}
+        className="border rounded-lg shadow-lg bg-white"
+      />
+    </div>
   );
 }
