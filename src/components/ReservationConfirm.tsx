@@ -12,7 +12,6 @@ export default function ReservationConfirmPage({
 }) {
   const router = useRouter();
   const handleClick = () => {
-    console.log('あああ');
     router.push(`/reservation/edit/${reservDetails.id}`);
   };
   if (!reservDetails) {

@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { userCheck } from '@/lib/supabase/user'
 
 export async function GET(request: Request) {
-  console.log("request.url:",request.url)
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
@@ -22,7 +21,6 @@ export async function GET(request: Request) {
       const user = await userCheck();
       // 未登録なら登録へ
       if (!user) {
-        console.log('未登録です');
         //会員登録後、元の予約ページに戻る
         return NextResponse.redirect(
           new URL(

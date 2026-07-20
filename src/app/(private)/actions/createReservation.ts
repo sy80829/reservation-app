@@ -3,10 +3,10 @@
 import { getReservation } from "@/lib/getReservation";
 import { sendMail } from "@/lib/sendMail";
 import { createClient } from "@/lib/supabase/server";
-import { reservActionProps, reservParamsProps } from "@/types";
+import { parsedCreateReservationParams, createReservationParams } from "@/types";
 import { redirect } from "next/navigation";
 
-export async function reservAction ( { new_start, target_date, course_id, stylist_id } : reservParamsProps ) {
+export async function createReservation ( { new_start, target_date, course_id, stylist_id } : createReservationParams ) {
     const supabase = await createClient();
 
     const {
@@ -25,7 +25,7 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
 
     //course_id実在確認
     const { data: course, error: coursesChceckError } = await supabase.from("courses").select("duration").eq("id", parsedCourseId).single();
-    
+
     if ( !course || coursesChceckError ) {
         throw new Error(coursesChceckError.message);
     }
@@ -43,13 +43,10 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
     const toISODate = (dateStr: string, timeStr: string) => {
         const [year, month, day] = dateStr.split("-");
         const [hour, minute] = timeStr.split(":");
-        console.log("year:", year);
-        console.log("month:", month);
-        console.log("day:", day);
         const date = new Date(
             `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${hour}:${minute}:00`
         );
-        return date;    
+        return date;
     };
 
     //start+duration
@@ -69,7 +66,7 @@ export async function reservAction ( { new_start, target_date, course_id, stylis
     //target_date
     const formattedDate = `${target_date}`
 
-    const parsedParams: reservActionProps = {
+    const parsedParams: parsedCreateReservationParams = {
         target_date: formattedDate,
         new_start,
         new_end,

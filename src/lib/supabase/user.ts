@@ -17,13 +17,8 @@ export async function userCheck() {
         .select('*')
         .eq('id', user.id)
         .single();
-    
-        console.log("users.のdata:", data);
 
-    
     if(error){
-        console.log('user取得エラー:', error);
-
         // 未登録
       if (error.code === 'PGRST116') {
         // userが存在しない

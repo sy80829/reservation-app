@@ -56,10 +56,6 @@ export default function UpdateReservationClient({ id }: { id: string }) {
     !editReservationData.time ||
     !id
   ) {
-    console.log('courseId:', editReservationData.courseId);
-    console.log('date:', editReservationData.date);
-    console.log('time:', editReservationData.time);
-    console.log('コースID、日付、時間がありません');
     router.push('/top?error=invalid_operation');
   }
 
@@ -79,14 +75,9 @@ export default function UpdateReservationClient({ id }: { id: string }) {
   }
 
   const handleClick = async () => {
-    console.log('editReservationData:', editReservationData);
     //　予約処理
     await updateRservation({
       reservationId: id,
-      // new_start: time + ':00',
-      // target_date: date,
-      // course_id: courseId,
-      // stylist_id: stylistId ?? null,
       editReservationData,
     });
   };

@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { reservAction } from '@/app/(private)/actions/reservAction';
+import { useEffect, useState } from 'react';
+import { createReservation } from '@/app/(private)/actions/createReservation';
 import ReservationCard from '@/components/ReservationCard';
 import { Course, Stylist } from '@/types';
 import { useNewReservationDataStore } from '@/atoms/newReservationDataState';
@@ -16,7 +16,7 @@ export default function Reservation() {
   const [stylist, setStylist] = useState<Stylist>();
   // setStateはfetch内のawait後（非同期）に呼ばれるため実質同期呼び出しではない
   useEffect(() => {
-    //コース取得
+    //コース取得（存在確認）
     const fetchCourse = async () => {
       try {
         const res = await fetch(`/api/course?courseId=${courseId}`); //APIを呼び出す
@@ -27,7 +27,7 @@ export default function Reservation() {
       }
     };
 
-    //スタイリスト取得
+    //スタイリスト取得（存在確認）
     const fetchStylist = async () => {
       try {
         const res = await fetch(`/api/stylist?stylistId=${stylistId}`); //APIを呼び出す
@@ -47,10 +47,6 @@ export default function Reservation() {
   }, [courseId, stylistId]);
 
   if (!courseId || !date || !time) {
-    console.log('courseId:', courseId);
-    console.log('date:', date);
-    console.log('time:', time);
-    console.log('コースID、日付、時間がありません');
     return null;
   }
 
@@ -79,7 +75,7 @@ export default function Reservation() {
     });
 
     //　予約処理
-    const result = await reservAction({
+    const result = await createReservation({
       new_start: time + ':00',
       target_date: date,
       course_id: courseId,

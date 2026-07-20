@@ -7,10 +7,6 @@ import { UpdateReseervationButton } from '@/types';
 export default function UpdateReservationButton({
   isSelect,
   id,
-  courseId,
-  stylistId,
-  selectedDate,
-  selectedTime,
   UpdateReservationButtonClick,
 }: UpdateReseervationButton) {
   const router = useRouter();
@@ -18,41 +14,8 @@ export default function UpdateReservationButton({
   const handleCheck = async () => {
     //編集時の選択状態をグローバル状態にセットする
     UpdateReservationButtonClick();
-    console.log('stylistId:', stylistId);
-
-    // スタイリストIDがある場合URLに含める
-    if (stylistId) {
-      console.log('push前', {
-        id,
-        courseId,
-        stylistId,
-        selectedDate,
-        selectedTime,
-      });
-      router.push(
-        // `/updateReservation/${id}?courseId=${courseId}&stylistId=${stylistId}&date=${selectedDate}&time=${selectedTime}`,
-        `/updateReservation/${id}`,
-      );
-    } else {
-      console.log('push前', {
-        id,
-        courseId,
-        selectedDate,
-        selectedTime,
-      });
-      router.push(
-        // `/updateReservation/${id}?courseId=${courseId}&date=${selectedDate}&time=${selectedTime}`,
-        `/updateReservation/${id}`,
-      );
-    }
+    router.push(`/updateReservation/${id}`);
   };
-
-  console.log('props1', {
-    courseId,
-    stylistId,
-    selectedDate,
-    selectedTime,
-  });
 
   return (
     <div className="flex justify-center mt-4">

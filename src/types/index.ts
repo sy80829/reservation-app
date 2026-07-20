@@ -65,10 +65,6 @@ export interface ReserveButtonProps {
 export interface UpdateReseervationButton {
   isSelect: boolean;
   id: number | undefined;
-  courseId: string | null;
-  stylistId: string | null;
-  selectedDate: string | null;
-  selectedTime: string | null;
   UpdateReservationButtonClick: () => void;
 }
 
@@ -81,7 +77,7 @@ export interface reservProps {
   userId: string;
 }
 
-export interface reservParamsProps {
+export interface createReservationParams {
   target_date: string,
   new_start: string,
   course_id: string,
@@ -106,7 +102,7 @@ export interface parsedUpdateReservationParams {
 }
 
 
-export interface reservActionProps {
+export interface parsedCreateReservationParams {
   target_date: string,
   new_start: string,
   new_end: string,

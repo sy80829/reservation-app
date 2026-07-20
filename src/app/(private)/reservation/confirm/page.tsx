@@ -43,11 +43,7 @@ export default async function Page() {
     .gte('reserv_date', today)
     .maybeSingle();
 
-  console.log('data:', data);
-  console.log('error:', error);
-
   if (error) {
-    console.log('エラー', error.message);
     redirect('/top');
   }
 

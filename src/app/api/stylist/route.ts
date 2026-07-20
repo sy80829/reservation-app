@@ -15,8 +15,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "コース情報取得に失敗しました"}, { status: 500 } );
       }
 
-      console.log("data.name:", data.name)
-
       //json形式に変換して返す
       return NextResponse.json({ stylist: data ?? []});
 

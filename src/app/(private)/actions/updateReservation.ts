@@ -12,7 +12,6 @@ type Props = {
     reservationId: string,
 }
 
-// export async function updateRservation ( { reservationId, new_start, target_date, course_id, stylist_id } : updateReservation ) {
 export async function updateRservation ( { reservationId, editReservationData } : Props ) {
 
     if (
@@ -74,9 +73,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
     const toISODate = (dateStr: string, timeStr: string) => {
         const [year, month, day] = dateStr.split("-");
         const [hour, minute] = timeStr.split(":");
-        console.log("year:", year);
-        console.log("month:", month);
-        console.log("day:", day);
         const date = new Date(
             `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${hour}:${minute}:00`
         );
@@ -132,7 +128,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
         throw new Error(error.message);
     }
     if(!data){
-        console.log("dataがあありません");
         redirect("/top");
     }
 
@@ -148,8 +143,6 @@ export async function updateRservation ( { reservationId, editReservationData } 
             reservData: reservData,
         });
     }
-
-    console.log( "success " , "更新完了"); 
 
     // 予約完了ページへリダイレクト
     redirect(`/reservationComplete/${data.id}`);
