@@ -54,7 +54,10 @@ export default function CancelReservationModal({ id, version }: Props) {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               disabled={isLoading}
-              onClick={() => {
+              onClick={(e) => {
+                // デフォルトだとクリック直後にダイアログが閉じてしまい、
+                // 処理中表示が一瞬も見えないため自動クローズを防止する
+                e.preventDefault();
                 handleClick();
               }}
             >

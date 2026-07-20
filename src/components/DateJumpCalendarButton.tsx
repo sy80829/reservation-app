@@ -11,7 +11,7 @@ export default function DateJumpCalendarButton({
 }: Props) {
   return (
     <button
-      className="-translate-y-1/2 w-8 h-8"
+      className="flex items-center justify-center w-8 h-8"
       onClick={() => onSelect()}
       ref={showCalendarButtonRef}
     >
