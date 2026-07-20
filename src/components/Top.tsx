@@ -138,21 +138,35 @@ export default function TopPage({ reservation, mode, error }: Props) {
   };
 
   //コースが変わるたび日付と時間をリセット
+  const [calendarLoading, setCalendarLoading] = useState(false);
   useEffect(() => {
+    // コース/スタイリスト切り替え中に古い取得結果が後から上書きしないようにするフラグ
+    let ignore = false;
     //予約カレンダー取得
     const fetchCalendar = async () => {
+      setCalendarLoading(true);
       try {
         const res = await fetch(
           `/api/calendar?course_id=${selectedCourseId}&stylist_id=${selectedStylist}&excludeId=${excludeId}`,
         );
         const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
-        setRservCalendar(data);
+        if (!ignore) {
+          setRservCalendar(data);
+        }
       } catch (error) {
         console.error(error);
+      } finally {
+        if (!ignore) {
+          setCalendarLoading(false);
+        }
       }
     };
 
     fetchCalendar();
+
+    return () => {
+      ignore = true;
+    };
   }, [selectedCourseId, selectedStylist, excludeId]);
 
   //スタイリスト選択時発火
@@ -211,6 +225,11 @@ export default function TopPage({ reservation, mode, error }: Props) {
       )}
       {error === 'invalid_operation' && (
         <div className="text-red-500">予期せぬエラーが発生しました</div>
+      )}
+      {error === 'out_of_hours' && (
+        <div className="text-red-500">
+          選択した時間は営業時間外のため予約できません。
+        </div>
       )}
       <div>
         {mode === 'edit' && (
@@ -278,17 +297,20 @@ export default function TopPage({ reservation, mode, error }: Props) {
               setShowCalenadar(!showCalendar);
             }}
             showCalendarButtonRef={showCalendarButtonRef}
+            disabled={calendarLoading}
           />
           {/* カレンダーめくりボタン */}
           <button
             onClick={() => emblaApi?.scrollPrev()}
-            className="bg-white shadow rounded-full w-8 h-8"
+            disabled={calendarLoading}
+            className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             ←
           </button>
           <button
             onClick={() => emblaApi?.scrollNext()}
-            className="bg-white shadow rounded-full w-8 h-8"
+            disabled={calendarLoading}
+            className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             →
           </button>
@@ -312,21 +334,32 @@ export default function TopPage({ reservation, mode, error }: Props) {
         <div className="overflow-hidden px-2" ref={emblaRef}>
           {/* calendar表示 */}
           <div className="flex pb-2 -mx-2 mt-2">
-            {selectedCourseId &&
-              reservCalendar.map((calendar) => (
-                <div
-                  key={calendar.date}
-                  className="flex-[0_0_calc(100%/2)] sm:flex-[0_0_calc(100%/3)] md:flex-[0_0_calc(100%/4)] lg:flex-[0_0_calc(100%/7)] px-1 md:px-2"
-                >
-                  <CalendarCard
-                    calendar={calendar}
-                    selectedDate={selectedDate}
-                    selectedTime={selectedTime}
-                    onSelectTime={setSelectedTime}
-                    onSelectDate={() => setSelectedDate(calendar.date)}
-                  />
-                </div>
-              ))}
+            {selectedCourseId && calendarLoading
+              ? // コース/スタイリスト切り替え直後は空き状況が古いままなので、
+                // 取得が終わるまで時間ボタンごと隠して選択できないようにする
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex-[0_0_calc(100%/2)] sm:flex-[0_0_calc(100%/3)] md:flex-[0_0_calc(100%/4)] lg:flex-[0_0_calc(100%/7)] px-1 md:px-2"
+                  >
+                    <div className="h-40 rounded-lg bg-gray-200 animate-pulse" />
+                  </div>
+                ))
+              : selectedCourseId &&
+                reservCalendar.map((calendar) => (
+                  <div
+                    key={calendar.date}
+                    className="flex-[0_0_calc(100%/2)] sm:flex-[0_0_calc(100%/3)] md:flex-[0_0_calc(100%/4)] lg:flex-[0_0_calc(100%/7)] px-1 md:px-2"
+                  >
+                    <CalendarCard
+                      calendar={calendar}
+                      selectedDate={selectedDate}
+                      selectedTime={selectedTime}
+                      onSelectTime={setSelectedTime}
+                      onSelectDate={() => setSelectedDate(calendar.date)}
+                    />
+                  </div>
+                ))}
           </div>
         </div>
         {/* 予約編集モード */}

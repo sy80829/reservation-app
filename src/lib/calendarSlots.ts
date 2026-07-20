@@ -26,6 +26,16 @@ export function formatSlotsTime(slots: reservSlots[]) {
   }))
 }
 
+//営業時間（10:00〜19:00）
+export const OPEN_TIME_MINUTES = 10 * 60
+export const CLOSE_TIME_MINUTES = 19 * 60
+
+// startMinutes〜endMinutesが営業時間内に収まっているか
+// （フロントのcanReserve計算とは別に、予約確定処理側でも必ず検証する）
+export function isWithinBusinessHours(startMinutes: number, endMinutes: number) {
+  return startMinutes >= OPEN_TIME_MINUTES && endMinutes <= CLOSE_TIME_MINUTES
+}
+
 // 時間枠生成
 // [
 //   { start: 600, end: 630, status: "available", canReserve: false },
@@ -36,8 +46,8 @@ export function formatSlotsTime(slots: reservSlots[]) {
 // ]
 export function generateTimeSlots() {
   const slots = []
-  let current = 10 * 60
-  const end = 19 * 60
+  let current = OPEN_TIME_MINUTES
+  const end = CLOSE_TIME_MINUTES
 
   while (current < end) {
     slots.push({

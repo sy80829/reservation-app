@@ -7,6 +7,7 @@ import {
   applyCourse,
   mergeFreeSlots,
   createReservationMapByStylistId,
+  isWithinBusinessHours,
 } from './calendarSlots';
 
 describe('timeToMinutes / minutesToTime', () => {
@@ -96,6 +97,23 @@ describe('mergeFreeSlots（複数スタイリストの空き状況の統合）',
     const result = mergeFreeSlots(stylistSlots);
 
     expect(result[0].canReserve).toBe(false);
+  });
+});
+
+describe('isWithinBusinessHours（回帰テスト：コース切替のレースで営業時間外の予約が通るバグ）', () => {
+  it('10:00〜19:00に収まっていればtrue', () => {
+    expect(isWithinBusinessHours(timeToMinutes('10:00'), timeToMinutes('11:30'))).toBe(true);
+    // 最終枠ちょうど19:00に終わるケース
+    expect(isWithinBusinessHours(timeToMinutes('18:30'), timeToMinutes('19:00'))).toBe(true);
+  });
+
+  it('終了時刻が19:00を超えるとfalse（所要時間が長いコースに切り替えた直後の枠がそのまま送られてくるケース）', () => {
+    // 18:30開始・90分コース → 20:00終了
+    expect(isWithinBusinessHours(timeToMinutes('18:30'), timeToMinutes('20:00'))).toBe(false);
+  });
+
+  it('開始時刻が10:00より前だとfalse', () => {
+    expect(isWithinBusinessHours(timeToMinutes('9:30'), timeToMinutes('10:30'))).toBe(false);
   });
 });
 

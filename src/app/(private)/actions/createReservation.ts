@@ -5,6 +5,7 @@ import { sendMail } from "@/lib/sendMail";
 import { createClient } from "@/lib/supabase/server";
 import { parsedCreateReservationParams, createReservationParams } from "@/types";
 import { redirect } from "next/navigation";
+import { timeToMinutes, isWithinBusinessHours } from "@/lib/calendarSlots";
 
 export async function createReservation ( { new_start, target_date, course_id, stylist_id } : createReservationParams ) {
     const supabase = await createClient();
@@ -65,6 +66,16 @@ export async function createReservation ( { new_start, target_date, course_id, s
 
     //target_date
     const formattedDate = `${target_date}`
+
+    // 営業時間チェック（フロントのcanReserve計算をすり抜けても、ここで必ず弾く）
+    if (
+        !isWithinBusinessHours(
+            timeToMinutes(new_start),
+            timeToMinutes(new_end),
+        )
+    ) {
+        return "out_of_hours";
+    }
 
     const parsedParams: parsedCreateReservationParams = {
         target_date: formattedDate,

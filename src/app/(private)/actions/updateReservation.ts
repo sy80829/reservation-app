@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { EditReservationData } from '@/atoms/editReservationDataState';
 import { getReservation } from "@/lib/getReservation";
 import { sendMail } from "@/lib/sendMail";
+import { timeToMinutes, isWithinBusinessHours } from "@/lib/calendarSlots";
 
 type Props = {
     editReservationData :EditReservationData;
@@ -95,6 +96,16 @@ export async function updateRservation ( { reservationId, editReservationData } 
 
     //target_date
     const formattedDate = `${editReservationData.date}`
+
+    // 営業時間チェック（フロントのcanReserve計算をすり抜けても、ここで必ず弾く）
+    if (
+        !isWithinBusinessHours(
+            timeToMinutes(new_start),
+            timeToMinutes(new_end),
+        )
+    ) {
+        redirect('/top?error=out_of_hours');
+    }
 
     const parsedParams: parsedUpdateReservationParams = {
         reservationId: parsedReservationId,
