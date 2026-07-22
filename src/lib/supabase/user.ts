@@ -16,6 +16,7 @@ export async function userCheck() {
         .from('users')
         .select('*')
         .eq('id', user.id)
+        .eq('is_delete' , false)
         .single();
 
     if(error){

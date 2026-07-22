@@ -35,7 +35,7 @@ export async function registerUser(formData: FormData) {
         id: user.id!,
         name: parsed.data.name,
         tel: parsed.data.tel,
-        is_delete: 0,
+        is_delete: false,
       },
     ])
     .select();

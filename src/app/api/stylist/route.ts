@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
     if(stylistId) {
 
-      const { data, error } = await supabase.from("stylists").select("id,name,bio,image_url").eq('id', stylistId).single();
+      const { data, error } = await supabase.from("stylists").select("id,name,bio,image_url").eq('id', stylistId).eq('is_delete', false).single();
 
       if(error) {
         return NextResponse.json({ error: "コース情報取得に失敗しました"}, { status: 500 } );
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     //topページから叩いたとき
     } else {
 
-    const { data, error} = await supabase.from("stylists").select("id,name,bio,image_url");
+    const { data, error} = await supabase.from("stylists").select("id,name,bio,image_url").eq('is_delete', false);
 
     if(error) {
       console.error(error);

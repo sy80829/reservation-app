@@ -69,6 +69,8 @@ Route HandlerやServer Actionsを活用することで、APIの実装やデー�
 
 **理由**：フロントの空き状況カレンダーはあくまで「見た目のプレビュー」であり、実際に予約が成立するかどうかの最終判定はDB側のRPC関数（`create_reservation`・`update_reservation`）が担っている。実際、開発中にフロントのカレンダー計算にバグ（指名なし予約で空き状況が正しく表示されない）が見つかったが、これは表示上の不具合に留まり、二重予約のようなデータ不整合は一度も起きなかった。「大事な判定はDBに寄せる」という設計のおかげで、フロント側のバグが致命的にならずに済んだ。
 
+RPC関数本体の定義は[supabase/migrations/20260722000000_reservation_functions.sql](./supabase/migrations/20260722000000_reservation_functions.sql)を参照。
+
 ## 5. loading.tsxとコンポーネント内スケルトンの使い分け
 
 **判断**：Next.jsの`loading.tsx`（サーバー側のSuspense）と、コンポーネント内で管理するローディングstate（クライアント側のフェッチ待ち）を両方使っている。

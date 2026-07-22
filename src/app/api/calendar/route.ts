@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 
   if (parsedStylistId !== null) {
       //stylist_id実在確認
-      const { error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).single();
+      const { error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).eq('is_delete', false).single();
 
       if ( stylistsCheckError ) {
           throw new Error(stylistsCheckError.message);
@@ -159,7 +159,7 @@ export async function GET(req: NextRequest) {
     //           },
     //   }
     //予約実績のないスタイリストも空き扱いで対象に含めるため、全スタイリストIDを取得
-    const { data: allStylistsData } = await supabase.from("stylists").select("id");
+    const { data: allStylistsData } = await supabase.from("stylists").select("id").eq('is_delete', false);
     const allStylistIds = (allStylistsData ?? []).map((s) => String(s.id));
 
     const reservationMap = createReservationMapByStylistId(formattedReservations, allStylistIds);

@@ -63,7 +63,7 @@ export async function updateRservation ( { reservationId, editReservationData } 
 
     if (parsedStylistId !== null) {
         //stylist_id実在確認
-        const { error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).single();
+        const { error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).eq('is_delete', false).single();
 
         if ( stylistsCheckError ) {
             throw new Error(stylistsCheckError.message);

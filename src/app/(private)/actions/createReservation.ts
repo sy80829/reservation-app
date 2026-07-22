@@ -33,7 +33,7 @@ export async function createReservation ( { new_start, target_date, course_id, s
 
     if (parsedStylistId !== null) {
         //stylist_id実在確認
-        const { data : stylist, error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).single();
+        const { data : stylist, error: stylistsCheckError } = await supabase.from("stylists").select("id").eq("id", parsedStylistId).eq('is_delete', false).single();
 
         if ( !stylist || stylistsCheckError ) {
             throw new Error(stylistsCheckError.message);
