@@ -36,7 +36,7 @@ export default function ReservationConfirmPage({
           </div>
         </CardHeader>
       </Card>
-      <div className="flex flex-col items-center mt-5">
+      <div className="flex flex-col items-center mt-5 max-w-xs mx-auto">
         <button
           onClick={() => handleClick()}
           className="bg-[#22C55E] text-white hover:bg-[#1eb856] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow"

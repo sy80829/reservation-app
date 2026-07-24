@@ -97,7 +97,7 @@ export default function Reservation() {
           time={time}
         />
       </div>
-      <div className="flex flex-col items-center justify-center mt-4">
+      <div className="flex flex-col items-center justify-center mt-4 max-w-md mx-auto">
         <button
           onClick={() => {
             {

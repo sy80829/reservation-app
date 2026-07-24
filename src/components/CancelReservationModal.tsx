@@ -36,36 +36,34 @@ export default function CancelReservationModal({ id, version }: Props) {
     }
   };
   return (
-    <div>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button className="bg-[#EF4444] text-white hover:bg-[#d83d3d] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow">
-            予約のキャンセル
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>予約をキャンセルしますか？</AlertDialogTitle>
-            <AlertDialogDescription>
-              この操作は取り消しできません。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={isLoading}
-              onClick={(e) => {
-                // デフォルトだとクリック直後にダイアログが閉じてしまい、
-                // 処理中表示が一瞬も見えないため自動クローズを防止する
-                e.preventDefault();
-                handleClick();
-              }}
-            >
-              {isLoading ? '処理中...' : 'Continue'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button className="bg-[#EF4444] text-white hover:bg-[#d83d3d] transition cursor-pointer w-full md:w-70 h-auto border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow">
+          予約のキャンセル
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>予約をキャンセルしますか？</AlertDialogTitle>
+          <AlertDialogDescription>
+            この操作は取り消しできません。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={isLoading}
+            onClick={(e) => {
+              // デフォルトだとクリック直後にダイアログが閉じてしまい、
+              // 処理中表示が一瞬も見えないため自動クローズを防止する
+              e.preventDefault();
+              handleClick();
+            }}
+          >
+            {isLoading ? '処理中...' : 'Continue'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
