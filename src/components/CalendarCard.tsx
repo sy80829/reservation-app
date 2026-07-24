@@ -22,7 +22,7 @@ export default function CalendarCard({
       >
         <div>
           <CardTitle className="text-center">{calendar.date}</CardTitle>
-          <div className="grid text-center grid-cols-2 gap-3 mt-2">
+          <div className="grid text-center grid-cols-2 gap-y-3 mt-2">
             {calendar.slots.map((time) => (
               <TimeButton
                 key={time.start}

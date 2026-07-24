@@ -39,7 +39,7 @@ export default function CancelReservationModal({ id, version }: Props) {
     <div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="bg-[#EF4444] text-white hover:bg-[#d83d3d] transition cursor-pointer w-full md:w-70 border rounded-3xl py-6 font-bold text-xl mb-3 shadow">
+          <Button className="bg-[#EF4444] text-white hover:bg-[#d83d3d] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl mb-3 shadow">
             予約のキャンセル
           </Button>
         </AlertDialogTrigger>

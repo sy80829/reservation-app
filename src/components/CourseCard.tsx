@@ -24,7 +24,7 @@ export default function CourseCard({
         }}
       >
         <CardHeader>
-          <CardTitle>{course.name}</CardTitle>
+          <CardTitle className="min-h-12">{course.name}</CardTitle>
           <CardDescription>
             {course.duration}分 / ¥{course.price}
           </CardDescription>

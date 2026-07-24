@@ -15,14 +15,14 @@ type Props = {
   reservCalendar: reservCalendar[];
   selectedDate: string | null;
   onSelect: (date: string) => void;
-  setShowCalenadar: (showCalendar: boolean) => void;
+  setShowCalendar: (showCalendar: boolean) => void;
 };
 
 export default function DateJumpCalendar({
   reservCalendar,
   selectedDate,
   onSelect,
-  setShowCalenadar,
+  setShowCalendar,
 }: Props) {
   // "2026-07-17" → Date
   function stringToDate(dateStr: string): Date {
@@ -107,7 +107,7 @@ export default function DateJumpCalendar({
     if (!date) return; // undefinedなら何もしない
     const dateStr = dateToString(date); // Date → "2026-07-17" に変換
     onSelect(dateStr); // 親から受け取ったonSelectを呼ぶ（Top.tsxのdateClickへ、selectedDateもここで更新される）
-    setShowCalenadar(false);
+    setShowCalendar(false);
   };
 
   return (

@@ -37,11 +37,8 @@ export default function TopPage({ reservation, mode, error }: Props) {
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
   // 選択中のコース（予約確認ページから遷移した場合はreservationの内容、
   // それ以外は確認画面（/reservation）から「予約を変更する」で戻った場合の下書きで初期化）
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(
-    () =>
-      reservation
-        ? String(reservation.courses.id)
-        : newReservationData.courseId,
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(() =>
+    reservation ? String(reservation.courses.id) : newReservationData.courseId,
   );
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
   //選択中のスタイリスト（フリー予約の場合は非選択状態にする）
@@ -61,11 +58,11 @@ export default function TopPage({ reservation, mode, error }: Props) {
       ? reservation.reserv_time_st.slice(0, 5)
       : newReservationData.time,
   );
-  const [reservCalendar, setRservCalendar] = useState<reservCalendar[]>([]);
+  const [reservCalendar, setReservCalendar] = useState<reservCalendar[]>([]);
   const [open, setOpen] = useState(false); //スタイリストモーダル状態
   const excludeId = mode === 'edit' ? reservation?.id : null; //予約変更画面
   const { setEditReservationData } = useEditReservationDataStore(); //予約編集時のデータ状態
-  const [showCalendar, setShowCalenadar] = useState<boolean>(false);
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const showCalendarButtonRef = useRef<HTMLButtonElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +74,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
         !calendarRef.current.contains(e.target as Node) &&
         !showCalendarButtonRef.current?.contains(e.target as Node)
       ) {
-        setShowCalenadar(false);
+        setShowCalendar(false);
       }
     };
 
@@ -161,7 +158,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
         );
         const data: reservCalendar[] = await res.json(); //JSON文字列 → JavaScriptオブジェクトに戻す
         if (!ignore) {
-          setRservCalendar(data);
+          setReservCalendar(data);
         }
       } catch (error) {
         console.error(error);
@@ -211,7 +208,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
     return (
       <div className="animate-pulse">
         <div className="h-8 w-20 rounded bg-gray-200 mt-5 mb-5" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div className="h-32 rounded-lg bg-gray-200" />
           <div className="h-32 rounded-lg bg-gray-200" />
           <div className="h-32 rounded-lg bg-gray-200" />
@@ -253,7 +250,7 @@ export default function TopPage({ reservation, mode, error }: Props) {
           </div>
         )}
         <div className="font-bold text-2xl pt-5 pb-5">コース</div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {courses?.map((course) => (
             <CourseCard
               key={course.id}
@@ -264,82 +261,84 @@ export default function TopPage({ reservation, mode, error }: Props) {
           ))}
         </div>
       </div>
-      <div className="flex flex-wrap items-center pt-5 gap-4">
-        <div className="text-2xl font-bold shrink-0 whitespace-nowrap">
-          空き状況
-        </div>
-        <div>
-          <StaffSelectDrawer
-            stylists={stylists}
-            selectedStylist={selectedStylist}
-            setOpen={setOpen}
-            open={open}
-            onSelect={handleStylistSelect}
-          />
-        </div>
-        {selectedStylistData && (
-          <div className="flex items-center gap-2">
-            <Image
-              src={selectedStylistData.image_url}
-              alt={selectedStylistData.name}
-              width={36}
-              height={36}
-              className="w-9 h-9"
+      <div className="text-2xl font-bold pt-5">空き状況</div>
+      <div className="flex flex-wrap items-center justify-between pt-3 gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <div>
+            <StaffSelectDrawer
+              stylists={stylists}
+              selectedStylist={selectedStylist}
+              setOpen={setOpen}
+              open={open}
+              onSelect={handleStylistSelect}
             />
-            <span className="font-bold -mr-1">
-              {selectedStylistData.name}
-            </span>
+          </div>
+          {selectedStylistData && (
+            <div className="flex items-center gap-2">
+              <Image
+                src={selectedStylistData.image_url}
+                alt={selectedStylistData.name}
+                width={36}
+                height={36}
+                className="w-9 h-9"
+              />
+              <span className="font-bold -mr-1">
+                {selectedStylistData.name}
+              </span>
+              <button
+                onClick={() => {
+                  setselectedStylist(null);
+                }}
+                className="p-1 rounded-full hover:bg-gray-200 pt-1.5"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+        {selectedCourseId && (
+          <div className="relative flex items-center gap-4">
+            {/* 📅 日付ジャンプ：スマホ・タブレットは右下floatで常に押せるように、md以上は今まで通り行内表示 */}
+            <div className="fixed bottom-4 right-4 z-30 md:static md:z-auto">
+              <DateJumpCalendarButton
+                onSelect={() => {
+                  setShowCalendar(!showCalendar);
+                }}
+                showCalendarButtonRef={showCalendarButtonRef}
+                disabled={calendarLoading}
+              />
+              {showCalendar && (
+                <div
+                  className="fixed bottom-24 right-4 z-30 md:absolute md:bottom-auto md:top-full md:right-0 md:mt-2 md:z-20"
+                  ref={calendarRef}
+                >
+                  <DateJumpCalendar
+                    reservCalendar={reservCalendar}
+                    selectedDate={selectedDate}
+                    onSelect={dateClick}
+                    setShowCalendar={setShowCalendar}
+                  />
+                </div>
+              )}
+            </div>
+            {/* カレンダーめくりボタン：スマホ・タブレットはスワイプで操作するので非表示、md以上のみ表示 */}
             <button
-              onClick={() => {
-                setselectedStylist(null);
-              }}
-              className="p-1 rounded-full hover:bg-gray-200 pt-1.5"
+              onClick={() => scrollByPage(-1)}
+              disabled={calendarLoading}
+              className="hidden md:block bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <X className="w-4 h-4" />
+              ←
+            </button>
+            <button
+              onClick={() => scrollByPage(1)}
+              disabled={calendarLoading}
+              className="hidden md:block bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              →
             </button>
           </div>
         )}
       </div>
-      {selectedCourseId && (
-        <div className="relative flex justify-end gap-2 pt-2">
-          <DateJumpCalendarButton
-            onSelect={() => {
-              setShowCalenadar(!showCalendar);
-            }}
-            showCalendarButtonRef={showCalendarButtonRef}
-            disabled={calendarLoading}
-          />
-          {/* カレンダーめくりボタン */}
-          <button
-            onClick={() => scrollByPage(-1)}
-            disabled={calendarLoading}
-            className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            ←
-          </button>
-          <button
-            onClick={() => scrollByPage(1)}
-            disabled={calendarLoading}
-            className="bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            →
-          </button>
-
-          {showCalendar && (
-            <div
-              className="absolute right-0 top-full mt-2 z-20"
-              ref={calendarRef}
-            >
-              <DateJumpCalendar
-                reservCalendar={reservCalendar}
-                selectedDate={selectedDate}
-                onSelect={dateClick}
-                setShowCalenadar={setShowCalenadar}
-              />
-            </div>
-          )}
-        </div>
-      )}
       <div className="relative">
         <div className="overflow-hidden px-2" ref={emblaRef}>
           {/* calendar表示 */}

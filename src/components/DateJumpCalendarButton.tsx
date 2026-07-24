@@ -13,12 +13,12 @@ export default function DateJumpCalendarButton({
 }: Props) {
   return (
     <button
-      className="flex items-center justify-center w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
+      className="flex items-center justify-center w-14 h-14 rounded-full border-0 border-gray-400 bg-white shadow-lg transition-transform duration-150 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
       onClick={() => onSelect()}
       disabled={disabled}
       ref={showCalendarButtonRef}
     >
-      <Calendar className="w-4 h-4" />
+      <Calendar className="w-6 h-6" />
     </button>
   );
 }
