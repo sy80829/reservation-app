@@ -29,16 +29,32 @@ type Props = {
   reservation?: TopPageProps;
   mode?: string;
   error?: string;
+  // 予約確認画面(/reservation)の「予約を変更する」から明示的に戻ってきた場合のみtrue。
+  // これが無いと、ログインし直した後の別アカウントなど無関係な場面でも
+  // ブラウザタブに残ったままの下書き(sessionStorage)を拾ってしまい、
+  // 画面上気づかないまま古い日時で予約が成立してしまう危険があるため、
+  // 「戻ってきた」ことが明示されているときだけ復元する
+  restoreDraft?: boolean;
 };
 
-export default function TopPage({ reservation, mode, error }: Props) {
+export default function TopPage({
+  reservation,
+  mode,
+  error,
+  restoreDraft,
+}: Props) {
   const router = useRouter();
-  const { newReservationData } = useNewReservationDataStore(); //確認画面から戻った場合の下書き
+  const { newReservationData, setNewReservationData } =
+    useNewReservationDataStore(); //確認画面から戻った場合の下書き
   const [courses, setCourses] = useState<CourseCardType[]>([]); //コース
   // 選択中のコース（予約確認ページから遷移した場合はreservationの内容、
-  // それ以外は確認画面（/reservation）から「予約を変更する」で戻った場合の下書きで初期化）
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(() =>
-    reservation ? String(reservation.courses.id) : newReservationData.courseId,
+  // それ以外はrestoreDraft指定時のみ、確認画面（/reservation）から
+  // 「予約を変更する」で戻った場合の下書きで初期化）
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(
+    () => {
+      if (reservation) return String(reservation.courses.id);
+      return restoreDraft ? newReservationData.courseId : null;
+    },
   );
   const [stylists, setStylists] = useState<stylistsType[]>([]); //スタイリスト
   //選択中のスタイリスト（フリー予約の場合は非選択状態にする）
@@ -46,18 +62,34 @@ export default function TopPage({ reservation, mode, error }: Props) {
     if (reservation) {
       return reservation.is_free ? null : String(reservation.stylists.id);
     }
-    return newReservationData.stylistId;
+    return restoreDraft ? newReservationData.stylistId : null;
   });
   //選択中の日付
-  const [selectedDate, setSelectedDate] = useState<string | null>(
-    () => reservation?.reserv_date ?? newReservationData.date,
-  );
+  const [selectedDate, setSelectedDate] = useState<string | null>(() => {
+    if (reservation) return reservation.reserv_date;
+    return restoreDraft ? newReservationData.date : null;
+  });
   //選択中の時間
-  const [selectedTime, setSelectedTime] = useState<string | null>(() =>
-    reservation
-      ? reservation.reserv_time_st.slice(0, 5)
-      : newReservationData.time,
-  );
+  const [selectedTime, setSelectedTime] = useState<string | null>(() => {
+    if (reservation) return reservation.reserv_time_st.slice(0, 5);
+    return restoreDraft ? newReservationData.time : null;
+  });
+
+  // restoreDraftで復元した後、または復元しない通常アクセス時は、
+  // 使い終わった/無関係になった下書きを必ず破棄する
+  // （sessionStorageはブラウザタブ単位で残るため、別アカウントでの
+  // 　ログインを跨いで古いデータが生き残らないようにする）
+  useEffect(() => {
+    if (!reservation) {
+      setNewReservationData({
+        courseId: null,
+        stylistId: null,
+        date: null,
+        time: null,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [reservCalendar, setReservCalendar] = useState<reservCalendar[]>([]);
   const [open, setOpen] = useState(false); //スタイリストモーダル状態
   const excludeId = mode === 'edit' ? reservation?.id : null; //予約変更画面

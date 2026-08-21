@@ -111,7 +111,7 @@ export default function Reservation() {
         <button
           onClick={() => {
             {
-              router.push(`/top`);
+              router.push(`/top?restoreDraft=1`);
             }
           }}
           className="bg-[#22C55E] text-white hover:bg-[#1fb456] transition cursor-pointer w-full md:w-70 border rounded-3xl py-2.5 font-bold text-xl"
