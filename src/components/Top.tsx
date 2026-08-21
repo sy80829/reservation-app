@@ -325,14 +325,14 @@ export default function TopPage({ reservation, mode, error }: Props) {
             <button
               onClick={() => scrollByPage(-1)}
               disabled={calendarLoading}
-              className="hidden md:block bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="hidden md:block bg-white shadow-lg rounded-full w-8 h-8 transition-transform duration-150 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               ←
             </button>
             <button
               onClick={() => scrollByPage(1)}
               disabled={calendarLoading}
-              className="hidden md:block bg-white shadow rounded-full w-8 h-8 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="hidden md:block bg-white shadow-lg rounded-full w-8 h-8 transition-transform duration-150 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               →
             </button>

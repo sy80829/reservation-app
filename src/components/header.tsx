@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export default function Header() {
   const router = useRouter();
@@ -18,6 +19,10 @@ export default function Header() {
   //ハンバーガーメニューのボタン
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [user, setUser] = useState<User | null>(null);
+  // CSSのactive:疑似クラスはiOS Safariだとtouch系のイベントリスナーが
+  // 要素に無いと発火しないことがあるため、押下状態を自前で管理する
+  const [menuButtonPressed, setMenuButtonPressed] = useState(false);
+  const releaseMenuButtonPress = () => setMenuButtonPressed(false);
 
   //user情報取得
   useEffect(() => {
@@ -76,7 +81,14 @@ export default function Header() {
             <button
               ref={buttonRef}
               onClick={() => setMenuOpen(!menuOpen)}
-              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition cursor-pointer"
+              onPointerDown={() => setMenuButtonPressed(true)}
+              onPointerUp={releaseMenuButtonPress}
+              onPointerLeave={releaseMenuButtonPress}
+              onPointerCancel={releaseMenuButtonPress}
+              className={cn(
+                'w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 shadow-lg transition-transform duration-150 cursor-pointer',
+                menuButtonPressed && 'scale-90',
+              )}
             >
               <Menu className="w-6 h-6 " />
             </button>
